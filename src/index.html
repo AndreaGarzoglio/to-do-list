@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuzo's To Do List</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body>
+    <!-- Main App Title -->
+    <div class="app-title-container">
+        <h1 class="app-title">Garuzo's To Do List</h1>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="container">
+        <!-- SIDEBAR: Projects -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Projects</h1>
+            </div>
+            <div id="projectsList" class="projects-list">
+                <!-- Projects rendered here by JS -->
+            </div>
+            <div class="sidebar-footer">
+                <button id="newProjectBtn" class="btn btn-primary">+ New Project</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT: Todos -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2 id="projectTitle">Select a project</h2>
+                <button id="newTodoBtn" class="btn btn-primary">+ New Todo</button>
+            </div>
+            <ul id="todosList" class="todos-list">
+                <!-- Todos rendered here by JS -->
+            </ul>
+        </main>
+    </div>
+
+    <!-- PROJECT MODAL: Create new project -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Project</h3>
+                <button id="projectModalCloseBtn" class="modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="projectModalInput" placeholder="Project name" class="form-input"
+                    autocomplete="off">
+            </div>
+            <div class="modal-footer">
+                <button id="projectModalCreateBtn" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TODO MODAL: Add/Edit todo -->
+    <div id="todoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Todo</h3>
+                <button id="modalClose" class="modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modalTitle">Title</label>
+                    <input type="text" id="modalTitle" placeholder="What needs to be done?" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="modalDescription">Description</label>
+                    <textarea id="modalDescription" placeholder="Add more details..." class="form-input"
+                        rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modalDueDate">Due Date</label>
+                        <input type="date" id="modalDueDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="modalPriority">Priority</label>
+                        <select id="modalPriority" class="form-input">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modalUpdateBtn" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
