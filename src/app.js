@@ -231,7 +231,6 @@ function renderProjects() {
             li.classList.add('active');
         }
 
-
         const name = document.createElement('span');
         name.textContent = project.name;
         name.style.cursor = 'pointer';
