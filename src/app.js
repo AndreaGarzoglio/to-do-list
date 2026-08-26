@@ -1212,24 +1212,10 @@ function buildDrawerColumn(project) {
     column.className = 'board-column';
     column.dataset.projectId = project.id;
 
-    // Touch swipe paging — a horizontal swipe anywhere on the drawer pages
-    // it, same as the lip arrows, for touch screens without hoverable arrows.
-    // Walking the file stack itself is left to the mobile slider (see
-    // drawer-lip-slider below) instead of a vertical swipe, since a vertical
-    // drag here is also how the page scrolls.
-    let touchStartX = 0;
-    let touchStartY = 0;
-    column.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-    column.addEventListener('touchend', (e) => {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        const dy = e.changedTouches[0].clientY - touchStartY;
-        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-            pageBoard(dx < 0 ? 1 : -1);
-        }
-    }, { passive: true });
+    // No swipe gestures on the drawer itself: paging between drawers is the
+    // lip arrows (tap) or the drawer-switch menu, and walking the file stack
+    // is the mobile slider (see drawer-lip-slider below) — both leave a
+    // finger drag here free to just scroll the page normally.
 
     // ---- the file stack itself, scoped to this project's todos ----
     const list = document.createElement('ul');
