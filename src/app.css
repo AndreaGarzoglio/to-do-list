@@ -1,15 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-    --bg-dark: #0c1021;
-    --bg-light: #1a2332;
-    --bg-card: #0f172a;
-    --text-primary: #e6e7eb;
-    --text-secondary: #9da3b5;
-    --accent-purple: #a855f7;
-    --accent-violet: #8b5cf6;
-    --accent-red: #ef4444;
-    --accent-green: #22c55e;
+    /* -- dark archive room -- */
+    --bg: #14110d;
+    --bg-2: #1b1712;
+    --surface: #221d16;
+    --surface-2: #2a241b;
+    --surface-3: #322a20;
+    --edge: rgba(232, 216, 186, 0.13);
+    --edge-strong: rgba(232, 216, 186, 0.26);
+
+    --text: #ece2d0;
+    --text-dim: #a2947c;
+    --text-faint: #756955;
+
+    /* -- rosy red accent -- */
+    --accent: #e2665e;
+    --accent-soft: #f08a83;
+    --accent-deep: #b8453e;
+    --stamp: #d95149;
+
+    /* -- opened dossier sheets -- */
+    --paper: #e9dfc8;
+    --paper-2: #ded2b7;
+    --paper-ink: #2b241a;
+    --paper-ink-dim: #6d6049;
+    --paper-line: rgba(43, 36, 26, 0.16);
+
+    /* -- folder colors -- */
+    --swatch-brass: #93712f;
+    --swatch-rust: #a3432a;
+    --swatch-forest: #3c5a3f;
+    --swatch-navy: #2d3c4c;
+    --swatch-plum: #5c3a52;
+    --swatch-mustard: #b98c2e;
+    --swatch-slate: #565f66;
+    --swatch-crimson: #7c2d2d;
+
+    --radius-sm: 3px;
+    --radius-md: 5px;
 }
 
 * {
@@ -21,176 +50,584 @@
 html,
 body {
     width: 100%;
+    /* was min-height: a floor, not a cap — the page happily grew past the
+       viewport to fit content, which made every overflow:hidden downstream
+       (the desk, the board) meaningless since nothing ever forced their
+       box to actually be smaller than their content in the first place */
     height: 100%;
-    margin: 0;
-    padding: 0;
+    overflow: hidden;
 }
 
 body {
-    font-family: 'Space Grotesk', sans-serif;
-    background: radial-gradient(1200px at 20% 15%, rgba(168, 85, 247, 0.16), transparent 55%),
-        radial-gradient(900px at 80% 0%, rgba(59, 130, 246, 0.12), transparent 50%),
-        linear-gradient(135deg, #0d1326 0%, #0a0f1f 50%, #050712 100%);
-    color: var(--text-primary);
-    line-height: 1.6;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text);
+    line-height: 1.55;
     display: flex;
     flex-direction: column;
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(760px 380px at 18% -12%, rgba(226, 102, 94, 0.055), transparent 60%),
+        radial-gradient(720px 360px at 98% -4%, rgba(198, 160, 92, 0.05), transparent 58%),
+        repeating-linear-gradient(122deg, rgba(255, 245, 225, 0.014) 0px, rgba(255, 245, 225, 0.014) 1px, transparent 1px, transparent 6px);
 }
 
-/* ========== MAIN TITLE ========== */
-.app-title-container {
-    padding: 24px 16px 16px;
-    text-align: center;
+/* film grain over the whole frame. Every surface here is meant to be a
+   photographed object — steel, card, ink — and large flat fields of pure
+   digital colour are what break that read. Static, not animated: this is
+   stock grain in a still, not a projector flicker. */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+:focus-visible {
+    outline: 2px dashed var(--accent);
+    outline-offset: 2px;
+}
+
+/* ========== MASTHEAD ========== */
+.masthead {
     flex-shrink: 0;
-    background: rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 32px 10px;
+    border-bottom: 1px solid var(--edge-strong);
+    background: linear-gradient(180deg, rgba(255, 240, 220, 0.035), transparent);
 }
 
-.app-title {
-    font-size: 42px;
-    font-weight: 800;
-    background: linear-gradient(120deg, #ef4444 0%, #ec4899 50%, #a855f7 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-    filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));
+.masthead-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+}
+
+/* the masthead title itself is the stamp now — inked and struck in at a
+   slight angle, the way the old standalone "FILE LATER" stamp was */
+.masthead-title {
+    display: inline-block;
     margin: 0;
-    line-height: 1.2;
+    font-family: 'Special Elite', 'IBM Plex Mono', monospace;
+    font-size: 52px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    line-height: 1;
+    transform: rotate(-3deg);
+    opacity: 0.85;
+    user-select: none;
+}
+
+.masthead-fulltitle {
+    margin-top: -4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.masthead-sub {
+    font-size: 13px;
+    color: var(--text-faint);
+    font-style: italic;
 }
 
 /* ========== BUTTONS ========== */
 .btn {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
+    padding: 9px 16px;
+    border: 1px solid var(--edge-strong);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
     font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     white-space: nowrap;
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .btn-primary {
-    background: linear-gradient(140deg, var(--accent-purple), var(--accent-violet));
-    color: white;
-    border: 1px solid rgba(168, 85, 247, 0.3);
+    background: var(--accent-deep);
+    border-color: var(--accent);
+    color: #fff2ee;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(140deg, #9333ea, #7c3aed);
-    transform: translateY(-2px);
+    background: var(--accent);
+}
+
+.btn-ghost {
+    background: transparent;
+    border-color: var(--edge);
+    color: var(--text-dim);
+}
+
+.btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent-soft);
+    transform: none;
+}
+
+.btn-block {
+    width: 100%;
 }
 
 /* ========== MAIN CONTAINER GRID ========== */
 .container {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 24px;
+    grid-template-columns: 270px 1fr;
+    gap: 22px;
     flex: 1;
-    padding: 16px;
+    /* capped and self-centred so the desk hugs the (now single, fixed-width)
+       drawer instead of stretching across whatever's left of a wide
+       viewport — the board's own centering only matters within this box */
+    width: 100%;
+    max-width: 880px;
+    align-self: center;
+    padding: 20px 32px 36px;
     min-height: 0;
+    transition: grid-template-columns 0.22s ease;
 }
 
-/* ========== SIDEBAR ========== */
-.sidebar {
+/* ========== THE CABINET (SIDEBAR) ========== */
+/* A steel filing cabinet: a brushed carcass holding drawers, each with a
+   recessed label holder and a chrome pull. The active drawer sits proud of
+   the others, as though it had been slid open. */
+
+.cabinet {
     display: flex;
     flex-direction: column;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    gap: 16px;
+    background:
+        linear-gradient(96deg, rgba(0, 0, 0, 0.34) 0%, transparent 12%, transparent 88%, rgba(0, 0, 0, 0.34) 100%),
+        linear-gradient(180deg, #4a4640 0%, #3b3833 6%, #35322d 100%);
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    padding: 14px 12px;
+    gap: 12px;
+    box-shadow:
+        0 1px 0 rgba(255, 245, 225, 0.14) inset,
+        0 18px 34px rgba(0, 0, 0, 0.5);
 }
 
-.sidebar-header {
+/* transparent to layout on desktop — the list and footer stay direct flex
+   children of .cabinet exactly as if this wrapper didn't exist. Only
+   becomes a real box once the mobile media query turns it into a
+   dropdown panel. */
+.cabinet-dropdown {
+    display: contents;
+}
+
+.cabinet-header {
     flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 4px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1px 0 rgba(255, 245, 225, 0.08);
 }
 
-.sidebar-header h1 {
-    font-size: 20px;
-    background: linear-gradient(120deg, #a855f7, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
+.cabinet-collapse-btn {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: 3px;
+    color: #ddd4c4;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease;
 }
 
-.projects-list {
+.cabinet-collapse-btn:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* ---- collapsed: a bare rail of drawers, nothing else ---- */
+.container.sidebar-collapsed {
+    grid-template-columns: 64px 1fr;
+}
+
+.container.sidebar-collapsed .cabinet-header h2,
+.container.sidebar-collapsed .cabinet-count,
+.container.sidebar-collapsed .cabinet-footer,
+.container.sidebar-collapsed .cab-plate-meta,
+.container.sidebar-collapsed .cab-handle {
+    display: none;
+}
+
+.container.sidebar-collapsed .cabinet-header {
+    justify-content: center;
+}
+
+.container.sidebar-collapsed .cab-plate-name {
+    font-size: 0;
+    text-align: center;
+    display: block;
+}
+
+.container.sidebar-collapsed .cab-plate-name::before {
+    content: attr(data-initial);
+    font-size: 16px;
+}
+
+.container.sidebar-collapsed .cab-drawer.active {
+    transform: none;
+}
+
+.container.sidebar-collapsed .cab-drawer.active .cab-face {
+    box-shadow:
+        0 1px 0 rgba(255, 245, 225, 0.2) inset,
+        0 0 0 2px var(--accent);
+}
+
+.container.sidebar-collapsed .cab-delete {
+    display: none;
+}
+
+.cabinet-header h2 {
+    font-family: 'Special Elite', monospace;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: #ddd4c4;
+}
+
+.cabinet-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #8d857a;
+    text-transform: uppercase;
+}
+
+.drawers-list {
     list-style: none;
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 2px;
+}
+
+/* ---- one drawer ---- */
+.cab-drawer {
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.cab-face {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 12px 13px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #55504a 0%, #454039 40%, #3a352f 100%);
+    border: 1px solid var(--cab-color, rgba(0, 0, 0, 0.6));
+    box-shadow:
+        0 1px 0 rgba(255, 245, 225, 0.16) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.4) inset,
+        0 3px 6px rgba(0, 0, 0, 0.35);
+    transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cab-drawer:hover .cab-face {
+    background: linear-gradient(180deg, #5e5952 0%, #4c473f 40%, #403b34 100%);
+}
+
+/* focused drawer stays put in the list — only its color marks it out,
+   noticeably lighter than the resting drawers around it */
+.cab-drawer.active .cab-face {
+    background: linear-gradient(180deg, #8b8377 0%, #746c60 40%, #5f574a 100%);
+    box-shadow:
+        0 1px 0 rgba(255, 245, 225, 0.25) inset,
+        0 0 0 1px var(--cab-color, var(--accent)),
+        0 5px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* the recessed label holder */
+.cab-plate {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 6px 9px;
+    background: #e6dcc6;
+    border-radius: 2px;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.5),
+        0 0 0 2px rgba(190, 194, 198, 0.85);
+}
+
+.cab-plate-name {
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cab-color, #2a241a);
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.cab-plate-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6d6049;
+}
+
+/* the one number on the plate worth reading in red — deadlines already
+   missed, in the same ink the app uses for overdue everywhere else.
+   nowrap so the count never gets orphaned from its label at a line break */
+.cab-plate-overdue,
+.drawer-lip-label-overdue {
+    color: #a3211c;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.cab-drawer.active .cab-plate {
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.5),
+        0 0 0 2px var(--cab-color, var(--accent));
+}
+
+/* the chrome pull */
+.cab-handle {
+    width: 58%;
+    height: 9px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #d7dade 0%, #9ba0a5 42%, #6e7378 60%, #b9bec3 100%);
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
+.cab-delete {
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    background: none;
+    border: none;
+    color: rgba(232, 220, 198, 0.35);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px;
+    transition: color 0.15s;
+}
+
+.cab-delete:hover {
+    color: var(--accent);
+}
+
+.cabinet-footer {
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.project-item {
-    padding: 12px 14px;
-    background: rgba(168, 85, 247, 0.1);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
+.cabinet-footer-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+/* ========== DESK (MAIN CONTENT) ========== */
+.desk {
     display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(700px 300px at 50% -10%, rgba(255, 234, 205, 0.05), transparent 70%),
+        var(--surface);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-md);
+    padding: 16px 18px 18px;
+    gap: 14px;
+    overflow: hidden;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+}
+
+.desk-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.search-wrap {
+    flex: 1;
+    min-width: 180px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 13px;
+    color: var(--text-faint);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    /* right padding leaves room for the clear button to sit inside the field */
+    padding: 9px 32px 9px 30px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+}
+
+.search-clear {
+    position: absolute;
+    right: 8px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--surface-3);
+    color: var(--text-dim);
+    font-size: 9px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.search-clear[hidden] {
+    display: none;
+}
+
+.search-clear:hover {
+    background: var(--accent-deep);
+    color: #fff2ee;
+}
+
+.search-input::placeholder {
+    color: var(--text-faint);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.filter-select {
+    width: auto;
+    padding: 9px 10px;
+    font-size: 12px;
+}
+
+.desk-actions-row {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.desk-actions-right {
+    display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.project-item:hover {
-    background: rgba(168, 85, 247, 0.15);
-    border-color: rgba(168, 85, 247, 0.3);
-}
-
-.project-item.active {
-    background: linear-gradient(140deg, var(--accent-purple), var(--accent-violet));
-    border-color: rgba(168, 85, 247, 0.5);
-    box-shadow: 0 0 16px rgba(168, 85, 247, 0.3);
-}
-
-.project-item span {
-    flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.project-item button {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 14px;
-    cursor: pointer;
-    padding: 0;
-    opacity: 0.6;
-    transition: all 0.2s;
-}
-
-.project-item button:hover {
-    opacity: 1;
-    color: var(--accent-red);
-}
-
-.sidebar-footer {
-    flex-shrink: 0;
-}
-
-.sidebar-footer .btn {
-    width: 100%;
-}
-
-/* ========== MAIN CONTENT ========== */
-.main-content {
+/* the only visible trace of the keyboard shortcuts — without it the "?"
+   binding would be undiscoverable */
+.shortcuts-hint {
+    width: 26px;
+    height: 26px;
     display: flex;
-    flex-direction: column;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--edge-strong);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-faint);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.shortcuts-hint:hover {
+    color: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.view-toggle {
+    display: flex;
+    border: 1px solid var(--edge-strong);
+    border-radius: var(--radius-sm);
     overflow: hidden;
+}
+
+.view-toggle-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.view-toggle-btn + .view-toggle-btn {
+    border-left: 1px solid var(--edge-strong);
+}
+
+.view-toggle-btn.active {
+    background: var(--accent-deep);
+    color: #fff2ee;
 }
 
 .content-header {
@@ -199,219 +636,1824 @@ body {
     align-items: center;
     gap: 16px;
     flex-shrink: 0;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
 }
 
-.content-header h2 {
-    font-size: 20px;
-    margin: 0;
-    background: linear-gradient(120deg, #a855f7, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.content-header[hidden] {
+    display: none;
+}
+
+.folder-tab {
+    position: relative;
+    background: var(--surface-3);
+    border: 1px solid var(--edge-strong);
+    border-bottom-color: var(--accent);
+    color: var(--text);
+    padding: 7px 20px 7px 16px;
+    border-radius: 3px 12px 3px 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
     font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.folder-tab-label {
+    display: inline-block;
+    max-width: 44ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
 }
 
 .content-header .btn {
-    width: auto;
     flex-shrink: 0;
 }
 
-#todosList {
+.view-pane {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.view-pane[hidden] {
+    display: none;
+}
+
+/* ══════════ THE BOARD (one drawer visible at a time) ══════════ */
+.board {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+    /* the column is a fixed height now (not stretched to fill the board), so
+       it should sit at the top, not be pulled to fill the board's height */
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    /* the side padding has to clear the drawer lip's bleed past its column
+       (--wall-inset + --wall-w), or this container's own overflow clip
+       slices the front panel off */
+    padding: 0 24px 30px;
+}
+
+.board-column {
+    /* the drawer itself is a fixed opening — it doesn't grow with however
+       many files are in it. Sized small enough that the window below (flex:1
+       within this viewport-bounded height) comfortably shows around 8 tabs
+       without the page itself ever having to scroll vertically. */
+    /* only the four the lip reads — everything else the drawer needs is
+       declared on .todos-list below, which shadows this level anyway */
+    --closed-h: 200px;
+    --edge-h: 10px;
+    --wall-inset: 16px;
+    --wall-w: 6px;
+
+    height: 100%;
+    /* only one drawer is ever on screen, so it can sit at a comfortable
+       fixed size instead of sharing the board with siblings */
+    width: min(460px, 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+/* The drawer opening: a fixed window that never scrolls, so the walls and
+   the recession stay nailed to the column instead of sliding away under the
+   files. The pile is laid out along the depth axis by layoutDrawerStack() in
+   app.js — every file gets an inline transform, so nothing here may position
+   them.
+   The metrics are re-declared here, not just on .board-column: this element's
+   own base .todos-list rule (below) already sets them, and a declaration on
+   the element always beats an inherited value, so the ancestor's copy was
+   silently never reaching here (or the folders inside).
+   z-index (rather than auto) is deliberate: it makes the opening its own
+   stacking context, so a file walking forward past the lip stays *under* the
+   front panel however high its own z-index climbs. */
+.board-column .todos-list {
+    --closed-h: 200px;
+    --tab-h: 36px;
+    --edge-h: 10px;
+    /* just enough rise to clear the (single-line) index strip past the card
+       behind it, without climbing high enough to cover that card's own tab */
+    --pull: 18px;
+    --wall-inset: 16px;
+    --wall-w: 6px;
+
+    /* fills whatever's left in this bounded column after the header and the
+       fixed lip below — never taller than the viewport allows */
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.board-empty {
+    margin: auto;
+}
+
+.search-results-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.empty-state {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 40px 12px;
+    border: 1px dashed var(--edge-strong);
+    border-radius: var(--radius-sm);
+}
+
+/* ══════════ THE OPEN DRAWER ══════════ */
+/* Looking down into a drawer of case files. Each folder is full height but
+   sits so far behind the one in front that only its tab clears it — the view
+   you get walking a finger back through a stack.
+
+   Two rules keep the illusion honest:
+   • Hovering pulls a folder up but never re-stacks it. It rises *behind* the
+     folder in front, the way a fingertip nudges one up to read the index.
+   • Because every folder runs far below its own tab, the pull can never
+     expose a gap under the cursor, so hover cannot flicker. */
+
+/* The drawer's proportions live on the container so the front panel can work
+   out exactly how much of the last folder it has to hide. */
+.todos-list {
+    /* closed-h must stay comfortably above step + pull, or a pulled-up file
+       would expose a gap under the cursor and start flickering */
+    --closed-h: 320px;
+    --tab-h: 48px;    /* the raised tab that carries the codename */
+    --edge-h: 14px;   /* sliver of folder showing between one tab and the next */
+    --step: 56px;     /* tab + edge: how far apart consecutive files sit */
+    --index-h: 64px;
+    --pull: 34px;
+    --wall-inset: 20px;  /* invisible buffer past the wall, reserved for the lip's bleed */
+    --wall-w: 8px;       /* the wall's own visible thickness */
+
+    position: relative;
     list-style: none;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;
     overflow-y: auto;
+    /* explicit, not left to default: overflow-y:auto alone makes the UA
+       treat overflow-x as auto too, which turns this into a second
+       horizontal scroll container and swallows the wheel/trackpad
+       gestures meant for the board's own horizontal scroll instead of
+       letting them bubble up to it */
+    overflow-x: hidden;
+    /* the drawer's interior is left transparent and its two walls are drawn
+       by the pseudo-elements below, so both can share one oblique (tapered)
+       outline instead of running as straight vertical rails. Past the walls
+       is a strip of plain padding — invisible against the desk behind it —
+       that exists only so the lip below has room to bleed wider than the
+       walls without exceeding this element's own clip boundary. */
+    /* enough headroom that the frontmost file, at full pull, never rises
+       past this container's own top edge — otherwise its own scroll clip
+       cuts it off right where the toolbar sits, looking like the buttons
+       are slicing through it */
+    padding: calc(var(--tab-h) + var(--pull)) calc(var(--wall-inset) + var(--wall-w)) 0;
 }
 
-.todo-item {
-    padding: 12px 14px;
-    background: rgba(168, 85, 247, 0.1);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    border-left: 3px solid var(--accent-purple);
-    border-radius: 8px;
+/* the dark recession behind the files, suggesting the interior runs back
+   further than what's visible — sits behind the whole pile (full height,
+   not just a strip capped above the first tab) so files further down still
+   have it behind them instead of a hard edge floating above the stack. The
+   grey walls (above) run the full height too, on either side of it, as
+   plain rails; this only tapers and fades the interior between them. */
+/* both pseudo-elements share the same box: it starts where the first tab
+   sits (so the recession never pokes up above the files) and ends exactly on
+   the drawer lip's top edge, which the lip's negative margin pulls up over
+   the list. Narrow at the back, opening out towards the lip. */
+.todos-list::before,
+.todos-list::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--tab-h) + var(--pull));
+    bottom: calc(var(--closed-h) - var(--edge-h) - 32px);
+    left: 0;
+    right: 0;
+    /* both dissolve into the desk at the far end rather than stopping on a
+       hard edge — the drawer runs back further than it can be seen into */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 42%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 42%);
+    pointer-events: none;
+}
+
+/* the interior itself */
+.todos-list::before {
+    /* darkest at the back of the drawer (the top, furthest from the lip),
+       washing out as it comes forward towards the lip */
+    background: linear-gradient(180deg, #0e0c09 0%, #050403 100%);
+    clip-path: polygon(14.5% 0, 85.5% 0, 97.5% 100%, 2.5% 100%);
+}
+
+/* the two walls, as a ring around that interior (outer trapezoid traced
+   clockwise, inner one counter-clockwise so it punches a hole) — each side
+   keeps its own cross-section: dark outer edge, specular fold, steel falling
+   away inwards, mirrored left to right */
+.todos-list::after {
+    background:
+        linear-gradient(90deg, #221e19 0%, #6b6459 22%, #574f45 42%, #37312a 100%) left / 50% 100% no-repeat,
+        linear-gradient(270deg, #221e19 0%, #6b6459 22%, #574f45 42%, #37312a 100%) right / 50% 100% no-repeat;
+    clip-path: polygon(
+        12% 0, 88% 0, 100% 100%, 0 100%,
+        2.5% 100%, 97.5% 100%, 85.5% 0, 14.5% 0, 2.5% 100%, 0 100%);
+}
+
+/* ---- a board column's drawer: a fixed opening, browsed in depth ---- */
+.board-column .folder {
+    position: absolute;
+    left: calc(var(--wall-inset) + var(--wall-w));
+    right: calc(var(--wall-inset) + var(--wall-w));
+    top: 0;
+    margin: 0;
+    /* files shrink towards the back of the drawer around their own top edge,
+       so the row of tabs stays legible as it recedes */
+    transform-origin: top center;
+    transition:
+        transform 0.3s cubic-bezier(0.22, 0.9, 0.3, 1),
+        opacity 0.3s ease;
+}
+
+/* ---- the stack ---- */
+/* A physical pile of dossiers in a drawer: natural document order (later
+   file = further forward, painted on top of the one before it), only tabs
+   showing except a sliver of the one behind. The focused file just rises
+   straight up out of the pile a little, like pulling it halfway out to
+   read it — it stays exactly where it already was in the stack, nothing
+   else moves, nothing fades, nothing reorders. */
+.folder {
+    position: relative;
+    /* lifts every file above the drawer's walls (::after, the last child in
+       paint order) — equal on all of them, so document order still decides
+       the pile's own front-to-back */
+    z-index: 1;
+    /* a flex item would otherwise shrink below its own height once enough
+       files are piled in to outgrow the drawer, crushing every tab down
+       to a sliver instead of just letting the pile scroll */
+    flex-shrink: 0;
+    height: var(--closed-h);
+    /* tapers every file's width from full (frontmost, --i = --n - 1) down to
+       the narrowest (backmost, --i = 0) — scaled by position within the
+       stack rather than a fixed px-per-step, so the taper always spans the
+       same 0-18px range no matter how many files are piled in, instead of
+       flattening out past the sixth one */
+    margin-inline: calc((var(--n) - 1 - var(--i)) * 18px / max(var(--n) - 1, 1));
+    margin-top: calc(var(--step) - var(--closed-h));
+    transition: transform 0.28s cubic-bezier(0.22, 0.9, 0.3, 1);
+    cursor: pointer;
+}
+
+/* the folder's own coloured body, as a real element placed after the tab
+   in the DOM (below) — so it paints on top of the tab wherever the two
+   overlap at the seam, instead of the tab riding in front of its own
+   folder. Plain document order handles this; no z-index needed. */
+.folder-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px 6px 3px 3px;
+    /* same gradient image as .file-tab, sized to their combined height and
+       shifted down by the tab's height so the two form one continuous
+       gradient — a single light-to-dark cycle for the whole folder,
+       instead of each restarting its own or repeating down the stack */
+    background:
+        linear-gradient(178deg,
+            color-mix(in srgb, var(--folder) 80%, #ffffff 20%) 0%,
+            var(--folder) 22%,
+            color-mix(in srgb, var(--folder) 50%, #000000 50%) 55%);
+    background-size: 100% calc(var(--closed-h) + var(--tab-h) - 1px);
+    background-position: 0 calc((var(--tab-h) - 1px) * -1);
+    background-repeat: no-repeat;
+    /* no top or left border: the tab sits flush against this same left
+       edge and pokes out above this same top edge, with no border of its
+       own — a border here would start abruptly right where the tab's
+       borderless edge ends, reading as two separate shapes instead of one */
+    border: 1px solid rgba(0, 0, 0, 0.55);
+    border-top: none;
+    border-left: none;
+}
+
+/* depth shading, bottom edge only — a straight vertical gradient rather
+   than box-shadow, which blurs from all four sides and darkened the left
+   and right edges too */
+.folder-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 40%);
+    pointer-events: none;
+}
+
+/* auto soaks up whatever free space is left in the (flex column) window,
+   pushing the whole pile down to hang from the bottom edge, near the
+   drawer floor, instead of from the top — the rest of the stack keeps its
+   normal overlap below this, unaffected */
+.folder:first-child {
+    margin-top: auto;
+}
+
+/* the raised one: pulled straight up out of the pile, its index strip
+   readable underneath the title — never above whichever file is already
+   in front of it (z-index stays natural document order, see app.js) */
+.folder.focused {
+    transform: translateY(calc(var(--pull) * -1));
+}
+
+/* A closed case greys out. This is a wash rather than a filter on the folder
+   itself, because a filter would drain the colour from the red check too —
+   and the check is the one thing that must stay red. Lives on the card, not
+   the tab — the tab has its own separate wash below. */
+.folder.completed .folder-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.folder.completed.focused .folder-card::before {
+    background: rgba(0, 0, 0, 0.22);
+}
+
+/* pulled clear of the drawer, then faded out — the dossier takes over */
+@keyframes folderEject {
+    0% { transform: translateY(calc(var(--pull) * -1)); opacity: 1; }
+    55% { transform: translateY(-190px); opacity: 1; }
+    100% { transform: translateY(-260px); opacity: 0; }
+}
+
+.folder.ejecting {
+    animation: folderEject 0.34s cubic-bezier(0.4, 0, 0.7, 0.5) forwards;
+    z-index: 999 !important;
+}
+
+/* ---- the raised tab: cut from the same shape as the folder itself ---- */
+/* Modelled on the classic manila-folder icon: a trapezoid notch grown out of
+   the folder's top-left corner, its slanted edge running straight down into
+   the body. Flat colour — the exact colour the folder's own gradient starts
+   at — so the seam where tab meets body carries zero contrast. Corners are
+   traced as short arcs (clip-path can't do border-radius) rather than a
+   single diagonal cut, so they read as rounded, not chamfered. */
+.file-tab {
+    position: absolute;
+    top: calc(var(--tab-h) * -1 + 1px);
+    left: 0;
+    width: fit-content;
+    max-width: calc(100% - 28px);
+    min-width: 130px;
+    /* overlaps the folder's own top edge by more than the 8px corner radius
+       below (was +1px — just 2px of overlap, less than the radius, which
+       left a sliver of the folder's own border-radius arc peeking out
+       under the tab's bottom-left curve instead of the two curves reading
+       as one seamless corner). The extra depth is bare overlap with nothing
+       in it — .file-tab-inner below holds the actual content, sized to the
+       original visible height, so the checkmark/title don't drift down
+       into it. */
+    height: calc(var(--tab-h) + 11px);
+    /* same gradient as .folder-card, sized and positioned so the two line
+       up into one continuous gradient across the unified tab+card shape,
+       instead of each restarting its own 0%-100% cycle independently */
+    background:
+        linear-gradient(178deg,
+            color-mix(in srgb, var(--folder) 80%, #ffffff 20%) 0%,
+            var(--folder) 22%,
+            color-mix(in srgb, var(--folder) 50%, #000000 50%) 55%);
+    background-size: 100% calc(var(--closed-h) + var(--tab-h) - 1px);
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    clip-path: polygon(
+        0 8px, 1px 4px, 4px 1px, 8px 0,
+        calc(100% - 24px) 0, calc(100% - 20px) 4px,
+        100% 100%,
+        8px 100%, 4px calc(100% - 1px), 1px calc(100% - 4px), 0 calc(100% - 8px)
+    );
+}
+
+/* the actual visible content, sized to what used to be the tab's whole
+   height — keeps the checkmark/title anchored where they've always been
+   regardless of how much extra overlap depth .file-tab needs below them */
+.file-tab-inner {
+    height: calc(var(--tab-h) + 1px);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    transition: all 0.2s;
+    gap: 9px;
+    padding: 0 20px 1px 14px;
 }
 
-.todo-item:hover {
-    background: rgba(168, 85, 247, 0.15);
+/* the completed wash lives on ::before, which only covers the folder box —
+   the tab hangs outside it, so it needs a wash of its own */
+.folder.completed .file-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }
 
-.todo-item.priority-high {
-    border-left-color: var(--accent-red);
+.folder.completed.focused .file-tab::before {
+    background: rgba(0, 0, 0, 0.22);
 }
 
-.todo-item.priority-medium {
-    border-left-color: var(--accent-purple);
+.folder-name {
+    position: relative;
+    flex: 0 1 auto;
+    min-width: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    font-family: 'Special Elite', monospace;
+    font-size: 14.5px;
+    letter-spacing: 0.02em;
+    color: #fdf6ea;
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.todo-item.priority-low {
-    border-left-color: #3b82f6;
-}
-
-.todo-item.completed {
-    opacity: 0.5;
-    background: rgba(34, 197, 94, 0.08);
-    border-left-color: var(--accent-green);
-}
-
-.todo-item.completed strong {
+.folder.completed .folder-name {
     text-decoration: line-through;
-    color: var(--text-secondary);
+    text-decoration-thickness: 1px;
+    color: #b7ac9c;
 }
 
-.todo-content {
-    flex: 1;
+.folder-badge {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 246, 234, 0.7);
+    border: 1px solid rgba(255, 246, 234, 0.3);
+    border-radius: 3px;
+    padding: 1px 5px;
+}
+
+.folder-check {
+    position: relative;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1.5px dashed rgba(255, 246, 234, 0.3);
+    border-radius: 50%;
+    color: transparent;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.folder-check:hover {
+    border-color: var(--accent-soft);
+    color: rgba(255, 246, 234, 0.45);
+}
+
+.folder.completed .folder-check {
+    border-color: transparent;
+    color: var(--accent);
+    font-size: 23px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- the index strip, readable only once the folder is pulled up ---- */
+/* Sits at the very top of the folder body, so it clears the tab in front
+   exactly when the file is pulled up — and stays invisible until then. */
+.folder-index {
+    /* positioned (not static) so it paints above .folder-card despite
+       coming later in the DOM — static content stacks below any
+       positioned sibling regardless of document order */
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    height: var(--index-h);
+    padding: 4px 18px 0;
+    opacity: 0;
+    transition: opacity 0.18s ease 0.06s;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.folder.focused .folder-index {
+    opacity: 1;
+}
+
+.folder-index-cell {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
     min-width: 0;
 }
 
-.todo-item strong {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.2s;
-    word-break: break-word;
+.folder-index-cell:last-child {
+    flex: 1;
+    min-width: 0;
 }
 
-.todo-item strong:hover {
-    color: var(--accent-purple);
-}
-
-.todo-item small {
-    font-size: 12px;
-    color: var(--text-secondary);
-    word-break: break-word;
-}
-
-.todo-meta {
-    display: flex;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-secondary);
-}
-
-.todo-item input[type="checkbox"] {
-    cursor: pointer;
-    width: 18px;
-    height: 18px;
-    accent-color: var(--accent-purple);
+.folder-index dt {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(255, 246, 234, 0.5);
     flex-shrink: 0;
 }
 
-.todo-item button {
+.folder-index dd {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: rgba(255, 246, 234, 0.92);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.folder-index dd.overdue {
+    color: #ffb3ad;
+    font-weight: 600;
+}
+
+.folder-stencil {
+    padding: 2px 18px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 246, 234, 0.14);
+    pointer-events: none;
+    user-select: none;
+}
+
+.folder.focused .folder-stencil {
+    display: none;
+}
+
+/* the front panel of the drawer: hides the body of the frontmost file so it,
+   too, shows only a tab */
+/* The floor of the drawer: covers the frontmost folder from just below its
+   edge sliver down, so that file shows only a tab like the rest, and reaches
+   a bit further past it — the drawer runs deeper than the files inside it. */
+.drawer-lip {
+    /* fixed 16:9 shape — its width comes from the flex column stretching it
+       to the container's width, height follows from that. The todos-list's
+       own background (the "part behind") is what absorbs any leftover
+       vertical space above it, not the lip itself. */
+    flex-shrink: 0;
+    flex-grow: 0;
+    aspect-ratio: 16 / 8;
+    margin-inline: calc((var(--wall-inset) + var(--wall-w)) * -1);
+    margin-top: calc(var(--edge-h) - var(--closed-h) + 32px);
+    border-radius: 3px 3px 4px 4px;
+    /* brushed steel: fine horizontal striations over the base falloff — the
+       grain runs the way a drawer front is actually drawn on the belt */
+    background:
+        repeating-linear-gradient(180deg,
+            rgba(255, 248, 235, 0.016) 0 1px,
+            transparent 1px 2px,
+            rgba(0, 0, 0, 0.018) 2px 3px,
+            transparent 3px 5px),
+        linear-gradient(180deg, #514b43 0%, #423d36 30%, #262019 100%);
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    box-shadow:
+        /* the folded leading edge, catching the same light as the walls */
+        0 1px 0 rgba(255, 245, 225, 0.28) inset,
+        0 2px 0 rgba(255, 245, 225, 0.06) inset,
+        0 -8px 22px rgba(0, 0, 0, 0.5),
+        inset 0 14px 24px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 20;
+}
+
+/* the stamped label holder every filing drawer carries — the drawer's name
+   on a recessed paper plate, styled like the cabinet's own .cab-plate
+   labels so the two read as the same fixture. Centred in the middle of the
+   lip, between the +File pull above and the decorative chrome below. Wraps
+   the label button and its drawer-switch menu so the menu can anchor off
+   the label itself instead of the whole lip. */
+.drawer-lip-title {
+    position: absolute;
+    left: 50%;
+    top: 44%;
+    transform: translate(-50%, -50%);
+    /* above the decorative chrome (and everything else on the lip), so the
+       drawer-switch menu never renders behind it */
+    z-index: 25;
+}
+
+.drawer-lip-label {
+    /* set inline per-drawer when a custom color is picked; falls back to
+       the neutral steel-plate ring otherwise */
+    --drawer-lip-color: rgba(190, 194, 198, 0.85);
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 260px;
+    max-width: 320px;
+    padding: 28px 26px;
+    background: #e6dcc6;
+    border-radius: 3px;
+    /* thicker than the sidebar's own plate — this is the one the user is
+       looking at, so it can afford to read as the more substantial fixture */
+    border: 3px solid #2a241a;
+    box-shadow:
+        0 2px 3px rgba(0, 0, 0, 0.5),
+        0 0 0 5px var(--drawer-lip-color);
+    font-family: 'Special Elite', monospace;
+    color: #2a241a;
+    text-align: center;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+}
+
+.drawer-lip-label:hover {
+    box-shadow:
+        0 2px 3px rgba(0, 0, 0, 0.5),
+        0 0 0 5px var(--accent);
+}
+
+.drawer-lip-label-name {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: normal;
+    overflow-wrap: break-word;
+    color: var(--drawer-lip-name-color, #2a241a);
+}
+
+.drawer-lip-label-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6d6049;
+}
+
+/* the drawer-switch menu, opened by clicking the label plate — a short
+   list of every other drawer in the archive, floating just above the label */
+.drawer-lip-menu {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
+    z-index: 30;
+    min-width: 200px;
+    max-width: 280px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-3);
+    border: 1px solid var(--edge-strong);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+}
+
+.drawer-lip-menu[hidden] {
+    display: none;
+}
+
+.drawer-lip-menu-item {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.drawer-lip-menu-item:hover {
+    background: var(--surface-2);
+}
+
+.drawer-lip-menu-item[aria-current="true"] {
+    color: var(--accent-soft);
+}
+
+.drawer-lip-menu-rename {
+    color: var(--text-dim);
+    padding-bottom: 10px;
+}
+
+/* the drawer's color picker — same swatch set as a case file's folder
+   color, but choosing one recolors the lip label's ring instead */
+.drawer-lip-menu-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 10px 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--edge);
+}
+
+.drawer-lip-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 0.12s ease;
+}
+
+.drawer-lip-swatch:hover {
+    transform: scale(1.12);
+}
+
+.drawer-lip-swatch.selected {
+    box-shadow: 0 0 0 2px var(--surface-3), 0 0 0 4px var(--accent-soft);
+}
+
+.drawer-lip-swatch-none {
+    background:
+        linear-gradient(to top right, transparent calc(50% - 1px), var(--accent), transparent calc(50% + 1px)),
+        var(--surface-2);
+}
+
+/* replaces the label's name line in place while renaming — sized to match
+   it so the plate doesn't jump */
+.drawer-lip-rename-input {
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-bottom: 1px solid #2a241a;
+    background: transparent;
+    font-family: 'Special Elite', monospace;
+    font-size: 17px;
+    line-height: 1.3;
+    color: #2a241a;
+    text-align: center;
+}
+
+.drawer-lip-rename-input:focus {
+    outline: none;
+    border-bottom-color: var(--accent-deep);
+}
+
+/* played once whenever a different drawer is selected — the files (and the
+   floor beneath them) rise into place as if the drawer were being pulled
+   open */
+@keyframes drawerOpen {
+    from { transform: translateY(22px) scaleY(0.92); opacity: 0; }
+    to { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+
+.todos-list.drawer-opening {
+    transform-origin: top center;
+    animation: drawerOpen 0.32s cubic-bezier(0.18, 0.9, 0.3, 1);
+}
+
+/* Paging arrows, seated left/right of the label — since the board only
+   ever shows one drawer, these are how the archive is browsed without a
+   sidebar click. */
+.drawer-lip-arrow {
+    position: absolute;
+    top: 44%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.55);
+    background: linear-gradient(180deg, #5d574e 0%, #494339 100%);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 1px 0 rgba(255, 245, 225, 0.10),
+        inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    color: rgba(238, 228, 208, 0.75);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.drawer-lip-arrow-prev { left: 20px; }
+.drawer-lip-arrow-next { right: 20px; }
+
+.drawer-lip-arrow:hover:not(:disabled) {
+    color: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.drawer-lip-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* tucked at the very bottom of the lip, quiet until you actually mean to
+   hit it — deleting a drawer from right here saves the trip back to the
+   sidebar. Below the decorative chrome, spelled out rather than an icon so
+   it doesn't get mistaken for a real control while browsing. */
+.drawer-lip-delete {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    z-index: 26;
     background: none;
     border: none;
-    color: var(--text-secondary);
-    font-size: 14px;
+    color: rgba(238, 228, 208, 0.3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 4px;
     cursor: pointer;
-    padding: 0;
-    opacity: 0.6;
-    transition: all 0.2s;
+    transition: color 0.15s ease;
+}
+
+.drawer-lip-delete:hover {
+    color: var(--accent-soft);
+}
+
+/* where in the archive the visible drawer sits — mirrors the delete button
+   on the opposite corner */
+.drawer-lip-counter {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: rgba(238, 228, 208, 0.4);
+}
+
+/* the chrome pull, seated in a socket rather than laid on the surface —
+   the stacked outer shadows are the shallow well it sits in, the inset
+   highlight is the light running along its rolled top edge. Purely
+   decorative now — every actual control on the lip moved elsewhere. */
+.drawer-lip-chrome {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    transform: translateX(-50%);
+    width: 132px;
+    height: 12px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #e2e5e8 0%, #a8adb2 38%, #6e7378 58%, #c3c8cd 100%);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.55),
+        0 2px 4px rgba(0, 0, 0, 0.7),
+        0 7px 14px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    pointer-events: none;
+}
+
+/* ══════════ THE OPENED DOSSIER ══════════ */
+/* The file lands centre-desk, tilted, cover open, document clipped inside. */
+
+.dossier-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 20px;
+    overflow-y: auto;
+    background: radial-gradient(120% 90% at 50% 40%, rgba(8, 6, 4, 0.62), rgba(4, 3, 2, 0.88));
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: fadeIn 0.18s ease-out;
+}
+
+.dossier-overlay[hidden] {
+    display: none;
+}
+
+.dossier-folder {
+    --tilt: -1.4deg;
+
+    position: relative;
+    width: min(700px, 100%);
+    margin: auto;
+    padding: 30px 18px 40px;
+    border-radius: 4px 4px 6px 6px;
+    background:
+        linear-gradient(172deg,
+            color-mix(in srgb, var(--folder) 88%, #ffffff 12%) 0%,
+            var(--folder) 40%,
+            color-mix(in srgb, var(--folder) 66%, #000000 34%) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.55);
+    box-shadow:
+        0 1px 0 rgba(255, 240, 220, 0.24) inset,
+        0 34px 70px rgba(0, 0, 0, 0.72);
+    transform: rotate(var(--tilt));
+    animation: dossierLand 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+}
+
+@keyframes dossierLand {
+    from {
+        opacity: 0;
+        transform: rotate(calc(var(--tilt) - 3deg)) scale(0.82) translateY(-70px);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(var(--tilt)) scale(1) translateY(0);
+    }
+}
+
+/* the folder's own tab, poking above the open cover — same trapezoid cut,
+   same flat colour formula as the closed .file-tab, so it reads as the
+   identical piece of card just seen from the desk instead of the drawer */
+.dossier-tab {
+    position: absolute;
+    top: -21px;
+    right: 46px;
+    max-width: 58%;
+    height: 22px;
+    padding: 0 16px 1px 12px;
+    display: flex;
+    align-items: center;
+    background: color-mix(in srgb, var(--folder) 90%, #ffffff 10%);
+    clip-path: polygon(
+        0 6px, 1px 3px, 3px 1px, 6px 0,
+        calc(100% - 14px) 0,
+        100% 100%,
+        6px 100%, 3px calc(100% - 1px), 1px calc(100% - 3px), 0 calc(100% - 6px)
+    );
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 246, 234, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dossier-paper {
+    position: relative;
+    padding: 26px 28px 22px;
+    border-radius: 2px;
+    background: var(--paper);
+    color: var(--paper-ink);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.dossier-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--paper-line);
+}
+
+.dossier-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-ink-dim);
+}
+
+.dossier-title {
+    font-family: 'Special Elite', monospace;
+    font-size: clamp(21px, 3.4vw, 30px);
+    font-weight: 400;
+    line-height: 1.25;
+    margin: 12px 0 16px;
+    color: var(--paper-ink);
+    word-break: break-word;
+}
+
+.dossier-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.dossier-column {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+/* ---- the rubber stamp: big enough to bury some of the text ---- */
+.dossier-stamp {
+    position: absolute;
+    top: 46%;
+    right: 8%;
+    transform:
+        translate(var(--stamp-dx, 0px), var(--stamp-dy, 0px))
+        rotate(var(--stamp-rot, 0deg));
+    font-family: 'Special Elite', monospace;
+    font-size: clamp(26px, 5vw, 40px);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    color: var(--stamp);
+    border: 5px solid var(--stamp);
+    border-radius: 7px;
+    padding: 5px 18px;
+    opacity: 0.78;
+    z-index: 3;
+    pointer-events: none;
+    text-shadow: 0 0 5px rgba(217, 81, 73, 0.35);
+}
+
+.dossier-stamp.striking {
+    animation: stampStrike 0.42s cubic-bezier(0.2, 1.5, 0.4, 1);
+}
+
+@keyframes stampStrike {
+    0% {
+        opacity: 0;
+        filter: blur(3px);
+        transform:
+            translate(var(--stamp-dx, 0px), var(--stamp-dy, 0px))
+            rotate(var(--stamp-rot, 0deg))
+            scale(3.1);
+    }
+    58% {
+        opacity: 0.95;
+        filter: blur(0);
+        transform:
+            translate(var(--stamp-dx, 0px), var(--stamp-dy, 0px))
+            rotate(var(--stamp-rot, 0deg))
+            scale(0.9);
+    }
+    100% {
+        opacity: 0.78;
+        filter: blur(0);
+        transform:
+            translate(var(--stamp-dx, 0px), var(--stamp-dy, 0px))
+            rotate(var(--stamp-rot, 0deg))
+            scale(1);
+    }
+}
+
+/* polaroid */
+.polaroid {
+    flex: 0 0 auto;
+    width: 168px;
+    max-width: 100%;
+    background: #f7f2e6;
+    padding: 9px 9px 0;
+    border-radius: 2px;
+    transform: rotate(-2.4deg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.polaroid img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: #14110d;
+}
+
+/* no photo on file — a blank frame is its own confession */
+.polaroid-blank {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #0c0a08;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    line-height: 1.5;
+    text-align: center;
+    color: rgba(232, 220, 198, 0.3);
+    text-transform: lowercase;
+}
+
+.polaroid-caption {
+    font-family: 'Special Elite', monospace;
+    font-size: 10.5px;
+    color: #7b6c53;
+    text-align: center;
+    padding: 7px 2px 9px;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+/* meta rows */
+.sheet-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.sheet-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+}
+
+.sheet-row dt {
+    flex-shrink: 0;
+    width: 72px;
+    color: var(--paper-ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sheet-row dd {
+    color: var(--paper-ink);
+    word-break: break-word;
+}
+
+.sheet-row dd.overdue {
+    color: var(--accent-deep);
+    font-weight: 600;
+}
+
+.clearance-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    border: 1px dashed currentColor;
+    border-radius: 3px;
+    padding: 1px 7px;
+}
+
+.clearance-pill.high { color: #a8332b; }
+.clearance-pill.medium { color: #8a6413; }
+.clearance-pill.low { color: #3c5568; }
+
+.sheet-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--paper-ink-dim);
+    padding-bottom: 5px;
+    margin-bottom: 9px;
+    border-bottom: 1px solid var(--paper-line);
+}
+
+.sheet-body {
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: var(--paper-ink);
+    word-break: break-word;
+    margin-bottom: 18px;
+}
+
+.sheet-body.muted {
+    color: var(--paper-ink-dim);
+    font-style: italic;
+}
+
+/* tags */
+.tag-chip {
+    position: relative;
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #fff6ea;
+    padding: 2px 11px 2px 7px;
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%);
+}
+
+.tag-chip button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 10px;
+    opacity: 0.85;
+}
+
+.sheet-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* objectives */
+.sheet-objectives {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 18px;
+}
+
+.sheet-objective {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13.5px;
+    color: var(--paper-ink);
+    cursor: pointer;
+}
+
+.sheet-objective input {
+    accent-color: var(--accent-deep);
+    cursor: pointer;
+    margin-top: 4px;
     flex-shrink: 0;
 }
 
-.todo-item button:hover {
-    opacity: 1;
-    color: var(--accent-red);
+.sheet-objective.done span {
+    text-decoration: line-through;
+    color: var(--paper-ink-dim);
+}
+
+.sheet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--paper-line);
+    position: relative;
+    z-index: 4;
+}
+
+.sheet-btn {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+    background: rgba(43, 36, 26, 0.03);
+    border: 1px solid rgba(43, 36, 26, 0.35);
+    border-radius: var(--radius-sm);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--paper-ink);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.sheet-btn:hover {
+    background: rgba(43, 36, 26, 0.1);
+    border-color: var(--paper-ink);
+}
+
+.sheet-btn.primary {
+    border-color: var(--accent-deep);
+    color: var(--accent-deep);
+}
+
+.sheet-btn.primary:hover {
+    background: rgba(184, 69, 62, 0.12);
+}
+
+.sheet-btn.danger:hover {
+    background: rgba(184, 69, 62, 0.14);
+    border-color: var(--accent-deep);
+    color: var(--accent-deep);
+}
+
+/* ========== CALENDAR ========== */
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    margin-bottom: 8px;
+}
+
+.calendar-label {
+    font-family: 'Special Elite', monospace;
+    font-size: 16px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    text-align: center;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.calendar-day {
+    position: relative;
+    min-height: 60px;
+    background: var(--surface-2);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    padding: 5px 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.calendar-day:hover {
+    transform: translateY(-2px);
+    border-color: var(--edge-strong);
+}
+
+.calendar-day.outside {
+    opacity: 0.32;
+}
+
+.calendar-day.today {
+    border-color: var(--accent);
+}
+
+.calendar-day.selected {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.calendar-day-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+}
+
+.calendar-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.calendar-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.calendar-agenda {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--edge-strong);
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-agenda h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+/* ---- agenda list: plain rows, no folder theatrics ---- */
+.agenda-list {
+    list-style: none;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.agenda-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--edge);
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.agenda-item:hover {
+    border-color: var(--accent);
+    background: var(--surface-3);
+}
+
+.agenda-item.completed {
+    opacity: 0.55;
+}
+
+.agenda-item.completed .agenda-item-title {
+    text-decoration: line-through;
+}
+
+.agenda-item-check {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--edge-strong);
+    background: transparent;
+    color: transparent;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.agenda-item-check:hover {
+    border-color: var(--accent);
+}
+
+.agenda-item.completed .agenda-item-check {
+    background: var(--accent-deep);
+    border-color: var(--accent);
+    color: #fff2ee;
+}
+
+.agenda-item-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.agenda-item-title {
+    font-size: 13px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.agenda-item-meta {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-faint);
+}
+
+.agenda-item-priority {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 7px;
+    border-radius: 3px;
+}
+
+.agenda-item-priority.priority-high { color: #c93a2e; background: rgba(201, 58, 46, 0.14); }
+.agenda-item-priority.priority-medium { color: #c1901c; background: rgba(193, 144, 28, 0.14); }
+.agenda-item-priority.priority-low { color: #1f6d92; background: rgba(31, 109, 146, 0.14); }
+
+/* ========== TOASTS ========== */
+/* One slot, bottom-centre. Destructive actions land here with an Undo
+   instead of interrupting with a confirm() dialog. */
+.toast-host {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    width: min(520px, calc(100vw - 32px));
+}
+
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 12px 12px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-3);
+    border: 1px solid var(--edge-strong);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+    animation: toastIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+}
+
+.toast.leaving {
+    animation: toastOut 0.18s ease-in forwards;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(10px); }
+}
+
+.toast-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    color: var(--text);
+}
+
+.toast-action {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--accent-soft);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.toast-action:hover {
+    background: var(--accent-deep);
+    color: #fff2ee;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 12px;
+    line-height: 1;
+    padding: 4px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.toast-close:hover {
+    color: var(--text);
+}
+
+/* ========== KEYBOARD SHORTCUTS OVERLAY ========== */
+.shortcuts-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(6, 5, 3, 0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.shortcuts-overlay[hidden] {
+    display: none;
+}
+
+.shortcuts-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 22px 24px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--edge-strong);
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.7);
+}
+
+.shortcuts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--edge);
+}
+
+.shortcuts-header h3 {
+    font-family: 'Special Elite', monospace;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.shortcuts-list > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 7px 0;
+}
+
+.shortcuts-list dt {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-faint);
+    font-size: 11px;
+}
+
+.shortcuts-list dd {
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--text-dim);
+}
+
+kbd {
+    display: inline-block;
+    min-width: 22px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    background: var(--surface-3);
+    border: 1px solid var(--edge-strong);
+    border-bottom-width: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
 }
 
 /* ========== MODALS ========== */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    inset: 0;
+    background: rgba(6, 5, 3, 0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: fadeIn 0.2s ease-out;
+    animation: fadeIn 0.15s ease-out;
+    padding: 20px;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(26, 42, 74, 0.6));
-    border: 1px solid rgba(168, 85, 247, 0.3);
-    border-radius: 12px;
-    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--edge-strong);
+    border-radius: var(--radius-md);
+    padding: 22px 24px;
     width: 90%;
-    max-width: 500px;
-    box-shadow: 0 8px 32px rgba(168, 85, 247, 0.15);
-    animation: slideUp 0.3s ease-out;
+    max-width: 460px;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.7);
+    animation: slideUp 0.2s ease-out;
+}
+
+.modal-content-wide {
+    max-width: 660px;
 }
 
 @keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--edge-strong);
 }
 
 .modal-header h3 {
-    font-size: 18px;
-    margin: 0;
-    color: var(--text-primary);
+    font-family: 'Special Elite', monospace;
+    font-size: 17px;
+    font-weight: 400;
 }
 
 .modal-close {
     background: none;
     border: none;
-    color: var(--text-secondary);
-    font-size: 20px;
+    color: var(--text-faint);
+    font-size: 17px;
     cursor: pointer;
     padding: 0;
-    opacity: 0.6;
-    transition: all 0.2s;
+    transition: color 0.15s;
 }
 
 .modal-close:hover {
-    opacity: 1;
-    color: var(--text-primary);
+    color: var(--accent);
 }
 
 .modal-body {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+}
+
+.dossier-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px;
+    gap: 20px;
+}
+
+.dossier-main {
     display: flex;
     flex-direction: column;
     gap: 14px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.dossier-photo-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dossier-photo-col > label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.photo-slot {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px dashed var(--edge);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.photo-placeholder {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    text-align: center;
+    padding: 0 8px;
+}
+
+.photo-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-btn-row {
+    display: flex;
+    gap: 6px;
+}
+
+.photo-btn-row .btn {
+    flex: 1;
+    padding: 7px 8px;
+    font-size: 10.5px;
 }
 
 .form-group {
@@ -421,29 +2463,38 @@ body {
 }
 
 .form-group label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
 }
 
 .form-input {
-    padding: 10px 12px;
-    background: rgba(168, 85, 247, 0.08);
-    border: 1px solid rgba(168, 85, 247, 0.2);
-    border-radius: 8px;
-    color: var(--text-primary);
+    padding: 9px 11px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--edge);
+    border-radius: var(--radius-sm);
+    color: var(--text);
     font-family: inherit;
     font-size: 13px;
-    transition: all 0.2s;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.form-input::placeholder {
+    color: var(--text-faint);
 }
 
 .form-input:focus {
     outline: none;
-    background: rgba(168, 85, 247, 0.12);
-    border-color: rgba(168, 85, 247, 0.4);
-    box-shadow: 0 0 12px rgba(168, 85, 247, 0.15);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: var(--accent);
+}
+
+.form-input option {
+    background: var(--surface-2);
+    color: var(--text);
 }
 
 .form-row {
@@ -456,59 +2507,289 @@ body {
     margin: 0;
 }
 
+.tag-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+    min-height: 4px;
+}
+
+.color-swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.color-swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s, border-color 0.12s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+}
+
+.color-swatch.selected {
+    border-color: var(--text);
+    transform: scale(1.1);
+}
+
+.color-swatch-custom {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 2px solid var(--edge);
+    border-radius: 4px;
+    cursor: pointer;
+    background: none;
+}
+
+.subtask-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.subtask-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    padding: 5px 8px;
+    background: rgba(0, 0, 0, 0.24);
+    border-radius: var(--radius-sm);
+}
+
+.subtask-item input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.subtask-item span {
+    flex: 1;
+    word-break: break-word;
+}
+
+.subtask-item.done span {
+    text-decoration: line-through;
+    color: var(--text-faint);
+}
+
+.subtask-item button {
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.subtask-item button:hover {
+    color: var(--accent);
+}
+
+.subtask-input-row {
+    display: flex;
+    gap: 6px;
+}
+
+.subtask-input-row .form-input {
+    flex: 1;
+}
+
 .modal-footer {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
     padding-top: 12px;
-    border-top: 1px solid rgba(168, 85, 247, 0.15);
-}
-
-.modal-footer .btn {
-    padding: 10px 16px;
-    font-size: 13px;
+    border-top: 1px solid var(--edge);
 }
 
 /* ========== SCROLLBAR ========== */
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(168, 85, 247, 0.05);
-    border-radius: 3px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(168, 85, 247, 0.2);
-    border-radius: 3px;
+    background: rgba(226, 102, 94, 0.28);
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(168, 85, 247, 0.3);
+    background: rgba(226, 102, 94, 0.5);
 }
 
 /* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-    .container {
+@media (max-width: 860px) {
+    .masthead {
+        padding: 16px 18px 14px;
+    }
+
+    .masthead-title {
+        font-size: 24px;
+        padding: 8px 16px;
+    }
+
+    .container,
+    .container.sidebar-collapsed {
         grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 14px 16px 24px;
+    }
+
+    /* the icon-only rail was a desktop-only concept; on mobile "collapsed"
+       instead means the dropdown below is closed, so the header itself
+       always stays in full (title + count), never shrinking to icons */
+    .container.sidebar-collapsed .cabinet-header h2,
+    .container.sidebar-collapsed .cabinet-count {
+        display: revert;
+    }
+
+    .cabinet {
+        max-height: none;
+        /* anchors the dropdown panel below, and keeps it above the desk
+           it's covering */
+        position: relative;
+        z-index: 40;
+    }
+
+    /* closed: just the header bar, taking no more room than its own height.
+       open: the list + footer become a panel that floats over the desk
+       below instead of pushing it down the page. */
+    .cabinet-dropdown {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: calc(100% + 8px);
+        display: flex;
+        flex-direction: column;
         gap: 12px;
+        padding: 12px;
+        background: #35322d;
+        border: 1px solid rgba(0, 0, 0, 0.6);
+        border-radius: 4px;
+        box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6);
+        max-height: min(65vh, 480px);
+        overflow-y: auto;
     }
 
-    .sidebar {
-        max-height: 250px;
+    .container.sidebar-collapsed .cabinet-dropdown {
+        display: none;
     }
 
-    .main-content {
-        max-height: 400px;
+    .drawers-list {
+        max-height: none;
+    }
+
+    .desk {
+        min-height: 460px;
+    }
+
+    /* shallower drawer on small screens so more tabs fit on one view */
+    .todos-list {
+        --closed-h: 270px;
+        --tab-h: 46px;
+        --edge-h: 12px;
+        --step: 50px;
+        --index-h: 58px;
+        --pull: 30px;
+    }
+
+    .folder-index {
+        gap: 14px;
+    }
+
+    .dossier-folder {
+        padding: 26px 12px 30px;
+    }
+
+    .dossier-paper {
+        padding: 20px 16px 18px;
+    }
+
+    .dossier-stamp {
+        right: 5%;
+        border-width: 4px;
+        padding: 3px 12px;
+    }
+
+    .dossier-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .photo-slot {
+        width: 140px;
+        max-width: 100%;
+        aspect-ratio: 1;
+        margin: 0 auto;
+    }
+
+    .photo-btn-row {
+        max-width: 140px;
+        margin: 0 auto;
     }
 
     .modal-content {
-        width: 95%;
-        padding: 20px;
+        padding: 18px;
     }
 
     .form-row {
         grid-template-columns: 1fr;
+    }
+
+    .desk-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-select, .view-toggle {
+        width: 100%;
+    }
+
+    .view-toggle-btn {
+        flex: 1;
+    }
+
+    .content-header {
+        flex-wrap: wrap;
+    }
+
+    .content-header .btn {
+        width: 100%;
+    }
+
+    .folder-tab {
+        max-width: 100%;
+    }
+}
+
+/* ========== REDUCED MOTION ========== */
+/* This design leans hard on movement — drawers slide, folders eject, stamps
+   strike, toasts fly in. All of it is decoration on top of a state change
+   that has already happened, so it can be dropped wholesale for anyone who
+   asked the OS for less motion. Transitions are kept as near-instant rather
+   than 0s so :hover states still settle instead of snapping. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

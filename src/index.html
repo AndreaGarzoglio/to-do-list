@@ -4,88 +4,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garuzo's To Do List</title>
+    <title>BDA &mdash; Bureau of Deferred Affairs</title>
 </head>
 
 <body>
-    <!-- Main App Title -->
-    <div class="app-title-container">
-        <h1 class="app-title">Garuzo's To Do List</h1>
-    </div>
+    <!-- MASTHEAD -->
+    <header class="masthead">
+        <div class="masthead-inner">
+            <h1 class="masthead-title" aria-label="Bureau of Deferred Affairs">B.D.A.</h1>
+            <span class="masthead-fulltitle">Bureau of Deferred Affairs</span>
+            <span class="masthead-sub">Professional Procrastinators trying to stop.</span>
+        </div>
+    </header>
 
     <!-- Main App Container -->
     <div id="app" class="container">
-        <!-- SIDEBAR: Projects -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1>Projects</h1>
+        <!-- SIDEBAR: Cabinet of Drawers (Projects) -->
+        <aside class="cabinet">
+            <div class="cabinet-header">
+                <h2>Archive</h2>
+                <span class="cabinet-count" id="projectCount">0 drawers</span>
+                <button type="button" id="cabinetCollapseBtn" class="cabinet-collapse-btn" aria-label="Collapse the drawer list" title="Collapse the drawer list">&laquo;</button>
             </div>
-            <div id="projectsList" class="projects-list">
-                <!-- Projects rendered here by JS -->
-            </div>
-            <div class="sidebar-footer">
-                <button id="newProjectBtn" class="btn btn-primary">+ New Project</button>
+            <!-- On mobile this wrapper becomes the dropdown panel that
+                 opens over the desk; on desktop it stays inert (display:
+                 contents), so the list and footer are still direct flex
+                 children of .cabinet as before. -->
+            <div class="cabinet-dropdown">
+                <div id="projectsList" class="drawers-list">
+                    <!-- Drawers rendered here by JS -->
+                </div>
+                <div class="cabinet-footer">
+                    <button id="newProjectBtn" class="btn btn-primary btn-block">+ New Drawer</button>
+                    <div class="cabinet-footer-row">
+                        <button id="exportBtn" class="btn btn-ghost" title="Download a backup of every case file">Export</button>
+                        <button id="importBtn" class="btn btn-ghost" title="Restore case files from a backup">Import</button>
+                        <input type="file" id="importInput" accept="application/json" hidden>
+                    </div>
+                </div>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT: Todos -->
-        <main class="main-content">
-            <div class="content-header">
-                <h2 id="projectTitle">Select a project</h2>
-                <button id="newTodoBtn" class="btn btn-primary">+ New Todo</button>
+        <!-- MAIN CONTENT: Case Files (Todos) -->
+        <main class="desk">
+            <div class="desk-toolbar">
+                <div class="search-wrap">
+                    <span class="search-icon" aria-hidden="true">&#9906;</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search everything you've been avoiding&hellip;" autocomplete="off">
+                    <button type="button" id="searchClearBtn" class="search-clear" aria-label="Clear search" hidden>&#10005;</button>
+                </div>
+                <select id="filterPriority" class="form-input filter-select" title="Filter by priority">
+                    <option value="">Any clearance</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <select id="filterStatus" class="form-input filter-select" title="Filter by status">
+                    <option value="">Any status</option>
+                    <option value="open">Open</option>
+                    <option value="completed">Closed</option>
+                </select>
             </div>
-            <ul id="todosList" class="todos-list">
-                <!-- Todos rendered here by JS -->
-            </ul>
+
+            <div class="desk-actions-row">
+                <button type="button" id="boardAddFileBtn" class="btn btn-primary">+ File</button>
+                <div class="desk-actions-right">
+                    <button type="button" id="shortcutsOpenBtn" class="shortcuts-hint" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">?</button>
+                    <div class="view-toggle" role="tablist" aria-label="View mode">
+                        <button id="viewListBtn" class="view-toggle-btn active" data-view="list">List</button>
+                        <button id="viewCalendarBtn" class="view-toggle-btn" data-view="calendar">Calendar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-header" id="contentHeader">
+                <div class="folder-tab">
+                    <span class="folder-tab-label" id="projectTitle">Select a drawer</span>
+                </div>
+                <button id="newTodoBtn" class="btn btn-primary">+ Open Case File</button>
+            </div>
+
+            <!-- LIST VIEW: one drawer on screen at a time, its own vertical
+                 file stack. The lip carries the drawer's name, the paging
+                 arrows, and the add-file pull. -->
+            <div id="listView" class="view-pane">
+                <div id="board" class="board">
+                    <!-- The single visible drawer column is rendered here by JS -->
+                </div>
+            </div>
+
+            <!-- SEARCH RESULTS VIEW -->
+            <div id="searchView" class="view-pane" hidden>
+                <p class="search-results-hint">Every drawer, searched. Click a file to open it.</p>
+                <ul id="searchResultsList" class="todos-list">
+                    <!-- Search results rendered here by JS -->
+                </ul>
+            </div>
+
+            <!-- CALENDAR VIEW -->
+            <div id="calendarView" class="view-pane" hidden>
+                <div class="calendar-header">
+                    <button id="calendarPrevBtn" class="btn btn-ghost" aria-label="Previous month">&lsaquo;</button>
+                    <span id="calendarLabel" class="calendar-label">Month Year</span>
+                    <button id="calendarNextBtn" class="btn btn-ghost" aria-label="Next month">&rsaquo;</button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- Calendar days rendered here by JS -->
+                </div>
+                <div class="calendar-agenda">
+                    <h3 id="agendaTitle">Pick a day to see what you were going to do</h3>
+                    <ul id="agendaList" class="agenda-list">
+                        <!-- Agenda items rendered here by JS -->
+                    </ul>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- PROJECT MODAL: Create new project -->
+    <!-- DOSSIER OVERLAY: the opened case file, centred on screen -->
+    <div id="dossierOverlay" class="dossier-overlay" hidden></div>
+
+    <!-- TOASTS: one slot, bottom-centre — destructive actions land here with an Undo -->
+    <div id="toastHost" class="toast-host" aria-live="polite"></div>
+
+    <!-- KEYBOARD SHORTCUTS: opened with "?" -->
+    <div id="shortcutsOverlay" class="shortcuts-overlay" hidden>
+        <div class="shortcuts-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+            <div class="shortcuts-header">
+                <h3>Field Manual</h3>
+                <button type="button" id="shortcutsCloseBtn" class="modal-close">&#10005;</button>
+            </div>
+            <dl class="shortcuts-list">
+                <div><dt><kbd>&larr;</kbd> <kbd>&rarr;</kbd></dt><dd>Previous / next drawer</dd></div>
+                <div><dt><kbd>1</kbd>&hellip;<kbd>9</kbd></dt><dd>Jump straight to a drawer</dd></div>
+                <div><dt><kbd>N</kbd></dt><dd>Open a new case file</dd></div>
+                <div><dt><kbd>D</kbd></dt><dd>New drawer</dd></div>
+                <div><dt><kbd>/</kbd></dt><dd>Jump to search</dd></div>
+                <div><dt><kbd>Esc</kbd></dt><dd>Close whatever is open</dd></div>
+                <div><dt><kbd>?</kbd></dt><dd>This manual</dd></div>
+            </dl>
+        </div>
+    </div>
+
+    <!-- PROJECT MODAL: Create new drawer -->
     <div id="projectModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-label="New drawer">
             <div class="modal-header">
-                <h3>New Project</h3>
-                <button id="projectModalCloseBtn" class="modal-close">✕</button>
+                <h3>New Drawer</h3>
+                <button id="projectModalCloseBtn" class="modal-close">&#10005;</button>
             </div>
             <div class="modal-body">
-                <input type="text" id="projectModalInput" placeholder="Project name" class="form-input"
+                <input type="text" id="projectModalInput" placeholder="Drawer label" class="form-input"
                     autocomplete="off">
             </div>
             <div class="modal-footer">
-                <button id="projectModalCreateBtn" class="btn btn-primary">Create</button>
+                <button id="projectModalCreateBtn" class="btn btn-primary">File It</button>
             </div>
         </div>
     </div>
 
-    <!-- TODO MODAL: Add/Edit todo -->
+    <!-- TODO MODAL: Add/Edit case file -->
     <div id="todoModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content modal-content-wide" role="dialog" aria-modal="true" aria-labelledby="todoModalTitle">
             <div class="modal-header">
-                <h3>Add Todo</h3>
-                <button id="modalClose" class="modal-close">✕</button>
+                <h3 id="todoModalTitle">Open Case File</h3>
+                <button id="modalClose" class="modal-close">&#10005;</button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="modalTitle">Title</label>
-                    <input type="text" id="modalTitle" placeholder="What needs to be done?" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label for="modalDescription">Description</label>
-                    <textarea id="modalDescription" placeholder="Add more details..." class="form-input"
-                        rows="3"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="modalDueDate">Due Date</label>
-                        <input type="date" id="modalDueDate" class="form-input">
+                <div class="dossier-grid">
+                    <div class="dossier-main">
+                        <div class="form-group">
+                            <label for="modalTitle">Codename / Title</label>
+                            <input type="text" id="modalTitle" placeholder="What needs to be done?" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="modalDescription">Briefing notes</label>
+                            <textarea id="modalDescription" placeholder="Add more details&hellip;" class="form-input"
+                                rows="3"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="modalDueDate">Deadline</label>
+                                <input type="date" id="modalDueDate" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="modalPriority">Clearance level</label>
+                                <select id="modalPriority" class="form-input">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="modalTagInput">Tags</label>
+                            <div class="tag-input-row">
+                                <input type="text" id="modalTagInput" placeholder="Type a tag and press Enter" class="form-input">
+                            </div>
+                            <div id="modalTagList" class="tag-chip-list"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Folder color</label>
+                            <div class="color-swatch-row" id="modalColorSwatches">
+                                <!-- swatches rendered by JS -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Objectives (subtasks)</label>
+                            <ul id="modalSubtaskList" class="subtask-list"></ul>
+                            <div class="subtask-input-row">
+                                <input type="text" id="modalSubtaskInput" placeholder="Add an objective&hellip;" class="form-input">
+                                <button id="modalSubtaskAddBtn" class="btn btn-ghost" type="button">Add</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="modalPriority">Priority</label>
-                        <select id="modalPriority" class="form-input">
-                            <option value="low">Low</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="high">High</option>
-                        </select>
+                    <div class="dossier-photo-col">
+                        <label>Surveillance photo</label>
+                        <div id="modalPhotoSlot" class="photo-slot">
+                            <div class="photo-placeholder" id="modalPhotoPlaceholder">No photo on file</div>
+                            <img id="modalPhotoPreview" class="photo-preview" hidden alt="Attached photo">
+                        </div>
+                        <input type="file" id="modalPhotoInput" accept="image/*" hidden>
+                        <div class="photo-btn-row">
+                            <button id="modalPhotoUploadBtn" class="btn btn-ghost" type="button">Attach</button>
+                            <button id="modalPhotoRemoveBtn" class="btn btn-ghost" type="button" hidden>Remove</button>
+                        </div>
                     </div>
                 </div>
             </div>
