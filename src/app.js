@@ -1212,10 +1212,23 @@ function buildDrawerColumn(project) {
     column.className = 'board-column';
     column.dataset.projectId = project.id;
 
-    // No swipe gestures on the drawer itself: paging between drawers is the
-    // lip arrows (tap) or the drawer-switch menu, and walking the file stack
-    // is the mobile slider (see drawer-lip-slider below) — both leave a
-    // finger drag here free to just scroll the page normally.
+    // Vertical touch swipe walks the file stack — the touch equivalent of
+    // the desktop wireWheelFocus wheel handler, since touch devices don't
+    // fire 'wheel' events for a finger drag. No horizontal swipe: paging
+    // between drawers on touch is the lip arrows (tap) or the drawer-switch
+    // menu only, so a swipe here is never mistaken for wanting the next drawer.
+    let touchStartY = 0;
+    column.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    column.addEventListener('touchend', (e) => {
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        // dragging a finger up (dy < 0) reads the same as scrolling down —
+        // it sends the pile away, matching wireWheelFocus's sign convention
+        if (Math.abs(dy) > 40) {
+            stepDrawerStack(list, project.id, dy < 0 ? -1 : 1);
+        }
+    }, { passive: true });
 
     // ---- the file stack itself, scoped to this project's todos ----
     const list = document.createElement('ul');
