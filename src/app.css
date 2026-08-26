@@ -296,7 +296,7 @@ body::after {
     padding: 12px 12px 13px;
     border-radius: 3px;
     background: linear-gradient(180deg, #55504a 0%, #454039 40%, #3a352f 100%);
-    border: 1px solid var(--cab-color, rgba(0, 0, 0, 0.6));
+    border: 1px solid rgba(0, 0, 0, 0.6);
     box-shadow:
         0 1px 0 rgba(255, 245, 225, 0.16) inset,
         0 -1px 0 rgba(0, 0, 0, 0.4) inset,
@@ -314,7 +314,7 @@ body::after {
     background: linear-gradient(180deg, #8b8377 0%, #746c60 40%, #5f574a 100%);
     box-shadow:
         0 1px 0 rgba(255, 245, 225, 0.25) inset,
-        0 0 0 1px var(--cab-color, var(--accent)),
+        0 0 0 1px var(--accent),
         0 5px 12px rgba(0, 0, 0, 0.5);
 }
 
@@ -362,7 +362,7 @@ body::after {
 .cab-drawer.active .cab-plate {
     box-shadow:
         0 1px 2px rgba(0, 0, 0, 0.5),
-        0 0 0 2px var(--cab-color, var(--accent));
+        0 0 0 2px var(--accent);
 }
 
 /* the chrome pull */
