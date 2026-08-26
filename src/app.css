@@ -255,69 +255,6 @@ body::after {
     box-shadow: 0 1px 0 rgba(255, 245, 225, 0.08);
 }
 
-.cabinet-collapse-btn {
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    border-radius: 3px;
-    color: #ddd4c4;
-    font-size: 11px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.cabinet-collapse-btn:hover {
-    background: rgba(0, 0, 0, 0.4);
-}
-
-/* ---- collapsed: a bare rail of drawers, nothing else ---- */
-.container.sidebar-collapsed {
-    grid-template-columns: 64px 1fr;
-}
-
-.container.sidebar-collapsed .cabinet-header h2,
-.container.sidebar-collapsed .cabinet-count,
-.container.sidebar-collapsed .cabinet-footer,
-.container.sidebar-collapsed .cab-plate-meta,
-.container.sidebar-collapsed .cab-handle {
-    display: none;
-}
-
-.container.sidebar-collapsed .cabinet-header {
-    justify-content: center;
-}
-
-.container.sidebar-collapsed .cab-plate-name {
-    font-size: 0;
-    text-align: center;
-    display: block;
-}
-
-.container.sidebar-collapsed .cab-plate-name::before {
-    content: attr(data-initial);
-    font-size: 16px;
-}
-
-.container.sidebar-collapsed .cab-drawer.active {
-    transform: none;
-}
-
-.container.sidebar-collapsed .cab-drawer.active .cab-face {
-    box-shadow:
-        0 1px 0 rgba(255, 245, 225, 0.2) inset,
-        0 0 0 2px var(--accent);
-}
-
-.container.sidebar-collapsed .cab-delete {
-    display: none;
-}
-
 .cabinet-header h2 {
     font-family: 'Special Elite', monospace;
     font-size: 18px;
@@ -1309,25 +1246,40 @@ body::after {
 
 /* the drawer-switch menu, opened by clicking the label plate — a short
    list of every other drawer in the archive, floating just above the label */
+/* opens upward from the label rather than downward: the label sits low on
+   the lip (close to the bottom of the board), so a menu dropping below it
+   ran out of room and got clipped by the board's own overflow clip */
 .drawer-lip-menu {
     position: absolute;
     left: 50%;
-    top: calc(100% + 8px);
+    bottom: calc(100% + 8px);
     transform: translateX(-50%);
     z-index: 30;
     min-width: 200px;
     max-width: 280px;
-    max-height: 120px;
-    overflow-y: auto;
+    /* grows to fit its content up to this cap; only past that does anything
+       inside start scrolling (see .drawer-lip-menu-list) */
+    max-height: min(75vh, 520px);
+    display: flex;
+    flex-direction: column;
     padding: 6px;
     border-radius: var(--radius-sm);
     background: var(--surface-3);
     border: 1px solid var(--edge-strong);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.55);
 }
 
 .drawer-lip-menu[hidden] {
     display: none;
+}
+
+/* the drawer switcher: the only part of the menu that scrolls on its own
+   once the whole menu hits its max-height, so rename/colors above it and
+   the mobile new-drawer/export/import actions below it stay put */
+.drawer-lip-menu-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .drawer-lip-menu-item {
@@ -1358,6 +1310,12 @@ body::after {
 .drawer-lip-menu-rename {
     color: var(--text-dim);
     padding-bottom: 10px;
+}
+
+/* desktop keeps these actions in the sidebar; only mobile (which has no
+   sidebar) shows them here too — see the mobile media query below */
+.drawer-lip-menu-mobile-actions {
+    display: none;
 }
 
 /* the drawer's color picker — same swatch set as a case file's folder
@@ -2635,78 +2593,144 @@ kbd {
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 860px) {
+    /* Much shorter masthead: just the stamp and the full name, no tagline,
+       so the board below gets as much vertical room as possible. */
     .masthead {
-        padding: 16px 18px 14px;
+        padding: 6px 14px 4px;
     }
 
     .masthead-title {
-        font-size: 24px;
-        padding: 8px 16px;
+        font-size: 28px;
     }
 
-    .container,
-    .container.sidebar-collapsed {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        padding: 14px 16px 24px;
+    .masthead-fulltitle {
+        margin-top: -3px;
+        font-size: 11px;
     }
 
-    /* the icon-only rail was a desktop-only concept; on mobile "collapsed"
-       instead means the dropdown below is closed, so the header itself
-       always stays in full (title + count), never shrinking to icons */
-    .container.sidebar-collapsed .cabinet-header h2,
-    .container.sidebar-collapsed .cabinet-count {
-        display: revert;
-    }
-
-    .cabinet {
-        max-height: none;
-        /* anchors the dropdown panel below, and keeps it above the desk
-           it's covering */
-        position: relative;
-        z-index: 40;
-    }
-
-    /* closed: just the header bar, taking no more room than its own height.
-       open: the list + footer become a panel that floats over the desk
-       below instead of pushing it down the page. */
-    .cabinet-dropdown {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: calc(100% + 8px);
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding: 12px;
-        background: #35322d;
-        border: 1px solid rgba(0, 0, 0, 0.6);
-        border-radius: 4px;
-        box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6);
-        max-height: min(65vh, 480px);
-        overflow-y: auto;
-    }
-
-    .container.sidebar-collapsed .cabinet-dropdown {
+    .masthead-sub {
         display: none;
     }
 
-    .drawers-list {
-        max-height: none;
+    /* The archive sidebar doesn't exist on mobile at all: switching,
+       creating, and export/import all move into the drawer lip's own menu
+       (see .drawer-lip-menu-mobile-actions), which is the only way left to
+       reach them here. This alone frees a whole header bar's worth of
+       height for the board. */
+    .cabinet {
+        display: none;
+    }
+
+    .container {
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 8px 12px 16px;
     }
 
     .desk {
-        min-height: 460px;
+        min-height: 0;
+        /* a safety net: if any view still runs taller than the space
+           left after the masthead and toolbar, the desk itself scrolls
+           instead of silently clipping it (the old overflow: hidden here
+           made anything past the fold just disappear, with no way back to it) */
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* the drawer-switch menu grows a couple of mobile-only rows (new
+       drawer, export/import) beneath the drawer list; hidden on desktop,
+       where the sidebar already covers those actions */
+    .drawer-lip-menu-mobile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(0, 0, 0, 0.5);
+    }
+
+    .drawer-lip-menu-io-row {
+        display: flex;
+        gap: 6px;
+    }
+
+    .drawer-lip-menu-io-row .drawer-lip-menu-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    /* the label plate was sized for desktop's fixed lip; here it has to
+       shrink to fit a narrow screen instead of overflowing it. An explicit
+       width (rather than shrink-to-fit) keeps it reliably centred and stops
+       the name wrapping one word per line into an oddly narrow column. */
+    .drawer-lip-label {
+        /* a fixed px width, not a percentage: .drawer-lip-title (its
+           positioning parent) has no width of its own to resolve a
+           percentage against, which left this shrink-wrapped to content
+           and centred on the wrong point */
+        min-width: 0;
+        width: 190px;
+        max-width: 78vw;
+        padding: 8px 10px;
+        gap: 2px;
+    }
+
+    .drawer-lip-label-name {
+        font-size: 12px;
+    }
+
+    /* a little taller than desktop's fixed lip, so the label, the chrome
+       pull, and the delete link all have room to breathe instead of
+       stacking edge to edge */
+    .drawer-lip {
+        aspect-ratio: 16 / 10;
+    }
+
+    .drawer-lip-arrow {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+
+    .drawer-lip-arrow-prev {
+        left: 6px;
+    }
+
+    .drawer-lip-arrow-next {
+        right: 6px;
+    }
+
+    .drawer-lip-chrome {
+        bottom: 26px;
+    }
+
+    .drawer-lip-label-meta {
+        font-size: 8px;
+    }
+
+    /* smaller calendar cells, and a floor under the agenda so it can't get
+       squeezed to 0 height by the grid above it — once the two together
+       are taller than the desk has room for, .desk's own overflow-y: auto
+       (above) takes over and the whole panel scrolls to reach it */
+    .calendar-day {
+        min-height: 34px;
+        padding: 3px 4px;
+        gap: 2px;
+    }
+
+    .calendar-agenda {
+        min-height: 140px;
     }
 
     /* shallower drawer on small screens so more tabs fit on one view */
     .todos-list {
-        --closed-h: 270px;
-        --tab-h: 46px;
-        --edge-h: 12px;
-        --step: 50px;
-        --index-h: 58px;
-        --pull: 30px;
+        --closed-h: 220px;
+        --tab-h: 38px;
+        --edge-h: 9px;
+        --step: 42px;
+        --index-h: 50px;
+        --pull: 22px;
     }
 
     .folder-index {
@@ -2751,12 +2775,36 @@ kbd {
         grid-template-columns: 1fr;
     }
 
+    /* search bar and both filters stay on one row: the search field shrinks
+       to make room instead of the filters dropping to their own line */
     .desk-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+        flex-wrap: nowrap;
+        gap: 6px;
     }
 
-    .filter-select, .view-toggle {
+    .search-wrap {
+        min-width: 0;
+    }
+
+    .search-input {
+        padding: 8px 26px 8px 24px;
+        font-size: 11px;
+    }
+
+    .filter-select {
+        flex: 0 1 auto;
+        width: auto;
+        max-width: 84px;
+        padding: 8px 4px;
+        font-size: 10px;
+        /* the native dropdown arrow doesn't leave room for itself at this
+           width and just crowds the truncated label text */
+        appearance: none;
+        -webkit-appearance: none;
+        text-align: center;
+    }
+
+    .view-toggle {
         width: 100%;
     }
 

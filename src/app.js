@@ -1204,8 +1204,10 @@ function buildDrawerColumn(project) {
     column.className = 'board-column';
     column.dataset.projectId = project.id;
 
-    // Touch swipe paging — a horizontal swipe anywhere on the drawer pages
-    // it, same as the lip arrows, for touch screens without hoverable arrows.
+    // Touch swipe — horizontal pages between drawers (same as the lip
+    // arrows), vertical walks the file stack (the touch equivalent of the
+    // desktop wireWheelFocus wheel handler, since touch devices don't fire
+    // 'wheel' events for a finger drag).
     let touchStartX = 0;
     let touchStartY = 0;
     column.addEventListener('touchstart', (e) => {
@@ -1217,6 +1219,12 @@ function buildDrawerColumn(project) {
         const dy = e.changedTouches[0].clientY - touchStartY;
         if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
             pageBoard(dx < 0 ? 1 : -1);
+            return;
+        }
+        // dragging a finger up (dy < 0) reads the same as scrolling down —
+        // it sends the pile away, matching wireWheelFocus's sign convention
+        if (Math.abs(dy) > 40 && Math.abs(dy) > Math.abs(dx) * 1.5) {
+            stepDrawerStack(list, project.id, dy < 0 ? -1 : 1);
         }
     }, { passive: true });
 
@@ -1342,6 +1350,12 @@ function buildDrawerColumn(project) {
     });
     menu.appendChild(colorRow);
 
+    // Only this part scrolls: the drawer switcher can run long, but the
+    // rename/color controls above it and the new-drawer/export/import
+    // actions below it (mobile) should stay put rather than being scrolled
+    // out of reach with it.
+    const drawerList = document.createElement('div');
+    drawerList.className = 'drawer-lip-menu-list';
     app.projects.forEach(p => {
         const item = document.createElement('button');
         item.type = 'button';
@@ -1352,8 +1366,52 @@ function buildDrawerColumn(project) {
             const index = app.projects.findIndex(pr => pr.id === p.id);
             focusDrawerIndex(index);
         };
-        menu.appendChild(item);
+        drawerList.appendChild(item);
     });
+    menu.appendChild(drawerList);
+
+    // Mobile only (hidden on desktop via CSS): with the sidebar archive
+    // gone on small screens, this menu is the only way left to create a
+    // drawer or reach export/import, so it carries those actions too.
+    const mobileActions = document.createElement('div');
+    mobileActions.className = 'drawer-lip-menu-mobile-actions';
+
+    const newDrawerItem = document.createElement('button');
+    newDrawerItem.type = 'button';
+    newDrawerItem.className = 'drawer-lip-menu-item';
+    newDrawerItem.textContent = '+ New Drawer';
+    newDrawerItem.onclick = () => {
+        closeMenu();
+        showAddProjectModal();
+    };
+    mobileActions.appendChild(newDrawerItem);
+
+    const importExportRow = document.createElement('div');
+    importExportRow.className = 'drawer-lip-menu-io-row';
+
+    const exportItem = document.createElement('button');
+    exportItem.type = 'button';
+    exportItem.className = 'drawer-lip-menu-item';
+    exportItem.textContent = 'Export';
+    exportItem.onclick = () => {
+        closeMenu();
+        exportBackup();
+    };
+    importExportRow.appendChild(exportItem);
+
+    const importItem = document.createElement('button');
+    importItem.type = 'button';
+    importItem.className = 'drawer-lip-menu-item';
+    importItem.textContent = 'Import';
+    importItem.onclick = () => {
+        closeMenu();
+        document.getElementById('importInput').click();
+    };
+    importExportRow.appendChild(importItem);
+
+    mobileActions.appendChild(importExportRow);
+    menu.appendChild(mobileActions);
+
     title.appendChild(menu);
     lip.appendChild(title);
 
@@ -2074,26 +2132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const [project] = getVisibleProjects();
         if (project) app.setActiveProject(project.id);
         showAddTodoModal();
-    };
-
-    // Sidebar collapse: shrinks the cabinet to a bare rail of drawers on
-    // desktop, or closes the drawer-list dropdown on mobile. With no saved
-    // preference yet, default to closed on mobile (open would otherwise
-    // cover the board before the user ever asked for it) and open on desktop.
-    const cabinetCollapseBtn = document.getElementById('cabinetCollapseBtn');
-    const appEl = document.getElementById('app');
-    const savedCollapsed = localStorage.getItem('sidebarCollapsed');
-    const startCollapsed = savedCollapsed !== null
-        ? savedCollapsed === '1'
-        : window.matchMedia('(max-width: 860px)').matches;
-    if (startCollapsed) {
-        appEl.classList.add('sidebar-collapsed');
-        cabinetCollapseBtn.textContent = '»';
-    }
-    cabinetCollapseBtn.onclick = () => {
-        const collapsed = appEl.classList.toggle('sidebar-collapsed');
-        cabinetCollapseBtn.textContent = collapsed ? '»' : '«';
-        localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
     };
 
     // View toggle
