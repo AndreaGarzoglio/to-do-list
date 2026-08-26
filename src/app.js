@@ -259,6 +259,7 @@ function seedMoreDrawers(instance) {
     // Drawer: Operation New Year, Same Me — 10 case files
     instance.createProject('Operation New Year, Same Me');
     const fitness = instance.getActiveProject();
+    fitness.color = '#1a4d70';
 
     const t1 = new Todo('Renew gym membership', 'Paid the annual fee. Plan: attend twice, then let the card charge in silence for eleven months.', offsetDate(-210), 'high');
     t1.createdAt = offsetDate(-212); t1.tags = ['fitness', 'resolution']; t1.color = '#1a4d70';
@@ -300,6 +301,7 @@ function seedMoreDrawers(instance) {
     // Drawer: Operation Inbox Zero — 5 case files
     instance.createProject('Operation Inbox Zero');
     const inbox = instance.getActiveProject();
+    inbox.color = '#d1962a';
 
     const i1 = new Todo('Unsubscribe from 200 newsletters', 'Started strong. Unsubscribed from three. Accidentally subscribed to one more.', offsetDate(-40), 'high');
     i1.createdAt = offsetDate(-41); i1.tags = ['email'];
@@ -321,6 +323,7 @@ function seedMoreDrawers(instance) {
     // Drawer: Operation Diet Starts Monday — 5 case files
     instance.createProject('Operation Diet Starts Monday');
     const diet = instance.getActiveProject();
+    diet.color = '#276b34';
 
     const d1 = new Todo('Throw out the junk food', "Removed from the pantry. Relocated to the car, for 'emergencies.'", offsetDate(-60), 'medium');
     d1.createdAt = offsetDate(-61); d1.tags = ['diet'];
@@ -772,6 +775,11 @@ function setDrawerStack(listEl, key, offset) {
     if (!folders.length) return;
     stackOffset[key] = Math.max(0, Math.min(folders.length - 1, offset));
     layoutDrawerStack(listEl, key, folders);
+
+    // keep the mobile slider in sync when the offset changes from anywhere
+    // else (wheel, swipe, or clicking a folder directly)
+    const slider = listEl.closest('.board-column')?.querySelector('.drawer-lip-slider');
+    if (slider) slider.value = String(stackOffset[key]);
 }
 
 // walks a column's pile forward (+1) or back (-1) one file
@@ -1497,6 +1505,27 @@ function buildDrawerColumn(project) {
     lip.appendChild(deleteBtn);
 
     column.appendChild(lip);
+
+    // Mobile only (hidden on desktop via CSS): a thumb-drag is much faster
+    // than one swipe per file for walking a deep stack, so this mirrors
+    // wireWheelFocus/setDrawerStack as a direct position control instead.
+    const sliderRow = document.createElement('div');
+    sliderRow.className = 'drawer-lip-slider-row';
+    const maxOffset = Math.max(0, sorted.length - 1);
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.className = 'drawer-lip-slider';
+    slider.min = '0';
+    slider.max = String(maxOffset);
+    slider.step = '1';
+    slider.value = String(Math.min(stackOffset[project.id] ?? 0, maxOffset));
+    slider.disabled = maxOffset === 0;
+    slider.setAttribute('aria-label', 'Scroll through case files');
+    slider.oninput = () => {
+        setDrawerStack(list, project.id, Number(slider.value));
+    };
+    sliderRow.appendChild(slider);
+    column.appendChild(sliderRow);
 
     return column;
 }
