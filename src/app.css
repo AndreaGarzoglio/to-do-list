@@ -2719,7 +2719,10 @@ kbd {
     .drawer-lip-slider-row {
         display: block;
         flex-shrink: 0;
-        padding: 4px 6px 0;
+        /* a clear gap from the lip below it, so this doesn't read as part
+           of the drawer itself — it's a separate scrub control for it */
+        margin-top: 22px;
+        padding: 0 10px;
     }
 
     .drawer-lip-slider {

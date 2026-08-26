@@ -259,7 +259,7 @@ function seedMoreDrawers(instance) {
     // Drawer: Operation New Year, Same Me — 10 case files
     instance.createProject('Operation New Year, Same Me');
     const fitness = instance.getActiveProject();
-    fitness.color = '#1a4d70';
+    fitness.color = '#c94422';
 
     const t1 = new Todo('Renew gym membership', 'Paid the annual fee. Plan: attend twice, then let the card charge in silence for eleven months.', offsetDate(-210), 'high');
     t1.createdAt = offsetDate(-212); t1.tags = ['fitness', 'resolution']; t1.color = '#1a4d70';
@@ -323,7 +323,7 @@ function seedMoreDrawers(instance) {
     // Drawer: Operation Diet Starts Monday — 5 case files
     instance.createProject('Operation Diet Starts Monday');
     const diet = instance.getActiveProject();
-    diet.color = '#276b34';
+    diet.color = '#1a4d70';
 
     const d1 = new Todo('Throw out the junk food', "Removed from the pantry. Relocated to the car, for 'emergencies.'", offsetDate(-60), 'medium');
     d1.createdAt = offsetDate(-61); d1.tags = ['diet'];
@@ -1530,12 +1530,19 @@ function buildDrawerColumn(project) {
     return column;
 }
 
-// Shared by the lip's Delete drawer button and the sidebar's ✕ — drops the
-// drawer straight away and offers it back via the toast, rather than
-// gate-keeping with a confirm().
+// Shared by the lip's Delete drawer button and the sidebar's ✕. Deleting a
+// whole drawer takes every case file inside it with it, so this is gated by
+// a confirm() (unlike single-file deletes, which just rely on the Undo
+// toast below) — the toast stays too, as a second safety net.
 function deleteDrawerWithUndo(project) {
     const index = app.projects.findIndex(p => p.id === project.id);
     if (index === -1) return;
+
+    const count = project.todos.length;
+    const confirmed = window.confirm(
+        `Delete "${project.name}" and its ${count} case file${count !== 1 ? 's' : ''}? This can be undone right after, but not once you leave the app.`
+    );
+    if (!confirmed) return;
 
     app.deleteProject(project.id);
     openDossier = null;
@@ -1544,7 +1551,6 @@ function deleteDrawerWithUndo(project) {
     carouselStart = activeIndex === -1 ? 0 : activeIndex;
     render();
 
-    const count = project.todos.length;
     showToast(`Deleted "${project.name}" and its ${count} case file${count !== 1 ? 's' : ''}.`, {
         actionLabel: 'Undo',
         onAction: () => {
