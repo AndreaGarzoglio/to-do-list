@@ -734,10 +734,20 @@ function layoutDrawerStack(listEl, key, folders = [...listEl.querySelectorAll('.
     const pull = parseFloat(cs.getPropertyValue('--pull'));
     const nearStep = tabH + edgeH;
 
+    // --tab-h/--edge-h/--pull are read as their literal authored numbers —
+    // custom properties don't get resolved through an ancestor's zoom the
+    // way a real length property does — while the lip/list rects below are
+    // real geometry, already multiplied by whatever zoom updateDrawerZoom
+    // applied. Dividing that measurement back down to the same unzoomed
+    // units the --vars are in keeps every quantity in this function
+    // consistent; zoom re-multiplies the lot exactly once when the y values
+    // computed here are written back as real translateY() lengths below.
+    const zoom = parseFloat(getComputedStyle(listEl.closest('.board-column')).zoom) || 1;
+
     // the front slot sits one tab above the lip, so the file standing there
     // shows its tab and index strip and nothing else; the back slot is the
     // top of the recession, where the walls converge
-    const frontTop = lip.getBoundingClientRect().top - listEl.getBoundingClientRect().top - nearStep;
+    const frontTop = (lip.getBoundingClientRect().top - listEl.getBoundingClientRect().top) / zoom - nearStep;
     const backTop = tabH + pull;
     const span = Math.max(frontTop - backTop, 1);
 
