@@ -207,9 +207,12 @@ body::after {
     flex: 1;
     /* capped and self-centred so the desk hugs the (now single, fixed-width)
        drawer instead of stretching across whatever's left of a wide
-       viewport — the board's own centering only matters within this box */
+       viewport — the board's own centering only matters within this box.
+       Wide enough to give the board column room to scale the drawer up
+       (see updateDrawerZoom in app.js) on a large screen instead of
+       leaving it stranded at its base size with empty space below it. */
     width: 100%;
-    max-width: 880px;
+    max-width: 1180px;
     align-self: center;
     padding: 20px 32px 36px;
     min-height: 0;

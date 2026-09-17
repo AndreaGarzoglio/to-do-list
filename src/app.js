@@ -697,6 +697,33 @@ function stackDepthCurve(p) {
     return p * (1 + STACK_K) / (p + STACK_K);
 }
 
+// the column's CSS caps it at a comfortable fixed size (see .board-column)
+// so it never sprawls to fill a tall viewport — but that leaves a big empty
+// gap below it on a genuinely large screen instead of using the room. This
+// scales the whole drawer back up to fill whatever space the board actually
+// has, capped so it doesn't grow absurd, and left alone below the point
+// where the column already needs all the room it's given (mobile).
+const DRAWER_ZOOM_MAX = 1.6;
+const DRAWER_ZOOM_MIN_VIEWPORT = 861; // matches the .container mobile breakpoint
+
+function updateDrawerZoom(column) {
+    if (window.innerWidth < DRAWER_ZOOM_MIN_VIEWPORT) {
+        column.style.zoom = '';
+        return;
+    }
+    const board = column.closest('.board');
+    if (!board) return;
+
+    column.style.zoom = 1;
+    const rect = column.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const boardStyle = getComputedStyle(board);
+    const availW = board.clientWidth - parseFloat(boardStyle.paddingLeft) - parseFloat(boardStyle.paddingRight);
+    const availH = board.clientHeight - parseFloat(boardStyle.paddingTop) - parseFloat(boardStyle.paddingBottom);
+    const scale = Math.min(availW / rect.width, availH / rect.height, DRAWER_ZOOM_MAX);
+    column.style.zoom = Math.max(1, scale).toFixed(3);
+}
+
 function layoutDrawerStack(listEl, key, folders = [...listEl.querySelectorAll('.folder')]) {
     const lip = listEl.closest('.board-column')?.querySelector('.drawer-lip');
     if (!folders.length || !lip) return;
@@ -752,6 +779,7 @@ function layoutDrawerStack(listEl, key, folders = [...listEl.querySelectorAll('.
 // every drawer on the board, after a render or a resize changed the geometry
 function layoutAllDrawerStacks() {
     document.querySelectorAll('.board-column').forEach(column => {
+        updateDrawerZoom(column);
         const list = column.querySelector('.todos-list');
         if (list) layoutDrawerStack(list, column.dataset.projectId);
     });
