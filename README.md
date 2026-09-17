@@ -1,4 +1,4 @@
-# THE BUREAU - Case File To-Do List
+# B.D.A. — Bureau of Deferred Affairs
 
 A to-do list styled as a classified case-file archive. Projects are drawers in a filing cabinet, tasks are case files (dossiers) you can tag, photograph, and stamp closed. Built with vanilla JavaScript (ES6 classes), Webpack, and `localStorage`: no framework, no backend.
 
