@@ -652,7 +652,7 @@ body::after {
        over a much taller span than the perspective stack was designed for.
        min() with 100% is a no-op wherever the available space is already
        under the cap (mobile), so this only clamps the large-screen case. */
-    height: min(760px, 100%);
+    height: min(620px, 100%);
     /* only one drawer is ever on screen, so it can sit at a comfortable
        fixed size instead of sharing the board with siblings */
     width: min(460px, 100%);
