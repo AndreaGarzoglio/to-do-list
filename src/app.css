@@ -647,7 +647,12 @@ body::after {
     --wall-inset: 16px;
     --wall-w: 6px;
 
-    height: 100%;
+    /* capped, not just 100%: on a tall/large viewport, height:100% let the
+       opening keep growing past a comfortable size, stretching the pile out
+       over a much taller span than the perspective stack was designed for.
+       min() with 100% is a no-op wherever the available space is already
+       under the cap (mobile), so this only clamps the large-screen case. */
+    height: min(760px, 100%);
     /* only one drawer is ever on screen, so it can sit at a comfortable
        fixed size instead of sharing the board with siblings */
     width: min(460px, 100%);
